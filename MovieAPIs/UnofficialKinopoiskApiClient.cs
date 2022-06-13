@@ -7,9 +7,9 @@ namespace MovieAPIs
 {
     public class UnofficialKinopoiskApiClient
     {
-        const string baseApiUrl = "https://kinopoiskapiunofficial.tech/api";
-        const string films = "films";
-        const string searchByKeyword = "search-by-keyword";
+        const string basePathSegment = "https://kinopoiskapiunofficial.tech/api";
+        const string filmsPathSegment = "films";
+        const string searchByKeywordPathSegment = "search-by-keyword";
         readonly HttpClient client;
         readonly JsonSerializerOptions jsonSerializerOptions;
 
@@ -27,21 +27,21 @@ namespace MovieAPIs
         public async Task<Film> GetFilmByIdAsync(int id)
         {
             string apiVersion = "v2.2";
-            string requestUrl = $"{baseApiUrl}/{apiVersion}/{films}/{id}";
-            var responceBody = await client.GetStreamAsync(requestUrl);
+            string urlPath = UrlHelper.GetPath(basePathSegment, apiVersion, filmsPathSegment, id.ToString());
+            var responceBody = await client.GetStreamAsync(urlPath);
             var film = JsonSerializer.Deserialize<Film>(responceBody, jsonSerializerOptions);
             return film;
         }
         public async Task<FilmSearchResponse> GetFilmsByKeywordAsync(string keyword, int page = 1)
         {
             string apiVersion = "v2.1";
-            string requestUrl = $"{baseApiUrl}/{apiVersion}/{films}/{searchByKeyword}";
             var queryParams = new Dictionary<string, string>
             {
                 ["keyword"] = keyword,
                 ["page"] = page.ToString()
-            }; 
-            var responceBody = await client.GetStreamWithQueryAsync(requestUrl, queryParams);
+            };
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, basePathSegment, apiVersion, filmsPathSegment, searchByKeywordPathSegment);
+            var responceBody = await client.GetStreamAsync(urlPathWithQuery);
             var filmsResponse = JsonSerializer.Deserialize<FilmSearchResponse>(responceBody, jsonSerializerOptions);
             return filmsResponse;
         }

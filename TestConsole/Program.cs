@@ -8,9 +8,8 @@ namespace TestConsole
     {
         static async Task Main(string[] args)
         {
-            string key = "";
+            string key = "Your api key";
             var client = new UnofficialKinopoiskApiClient(key);
-            var film = await client.GetFilmsByKeywordAsync("Матрица");
         }
     }
 }
