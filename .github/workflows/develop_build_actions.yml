@@ -1,6 +1,10 @@
 name: .NET Pipeline
 
-on: [push]
+on: 
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ] 
 
 jobs:    
   build-linux:
@@ -22,7 +26,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
   build-win:
-  
+
     runs-on: windows-latest
     strategy:
       matrix:
