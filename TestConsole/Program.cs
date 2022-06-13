@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 using MovieAPIs;
 
 namespace TestConsole
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
         }
     }
 }
