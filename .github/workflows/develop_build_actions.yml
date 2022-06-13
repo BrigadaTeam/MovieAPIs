@@ -5,10 +5,10 @@ on: [push]
 jobs:    
   build:
 
-    runs-on: windows-latest
+    runs-on: ['windows-latest', 'ubuntu-latest']
     strategy:
       matrix:
-        dotnet-version: ['5.0.x', '6.0.x']
+        dotnet-version: ['6.x']
 
     steps:
     - uses: actions/checkout@v3
