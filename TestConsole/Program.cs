@@ -8,6 +8,8 @@ namespace TestConsole
     {
         static async Task Main(string[] args)
         {
+            string key = "Your api key";
+            var client = new UnofficialKinopoiskApiClient(key);
         }
     }
 }
