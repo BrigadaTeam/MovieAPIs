@@ -10,6 +10,7 @@ namespace MovieAPIs
         const string basePathSegment = "https://kinopoiskapiunofficial.tech/api";
         const string filmsPathSegment = "films";
         const string searchByKeywordPathSegment = "search-by-keyword";
+        const string similarsPathSegment = "similars";
         readonly HttpClient client;
         readonly JsonSerializerOptions jsonSerializerOptions;
 
@@ -44,6 +45,14 @@ namespace MovieAPIs
             var responceBody = await client.GetStreamAsync(urlPathWithQuery);
             var filmsResponse = JsonSerializer.Deserialize<FilmSearchResponse>(responceBody, jsonSerializerOptions);
             return filmsResponse;
+        }
+        public async Task<RelatedFilmsResponce> GetRelatedFilmsAsync(int id)
+        {
+            string apiVersion = "v2.2";
+            string urlPath = UrlHelper.GetPath(basePathSegment, apiVersion, filmsPathSegment, id.ToString(), similarsPathSegment);
+            var responceBody = await client.GetStreamAsync(urlPath);
+            var filmsResponce = JsonSerializer.Deserialize<RelatedFilmsResponce>(responceBody, jsonSerializerOptions);
+            return filmsResponce;
         }
     }
 }
