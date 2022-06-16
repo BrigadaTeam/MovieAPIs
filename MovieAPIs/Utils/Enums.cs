@@ -14,4 +14,9 @@
         MINI_SERIES,
         ALL
     }
+
+    public enum Filter
+    {
+        ALL = -1
+    }
 }

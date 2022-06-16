@@ -57,7 +57,7 @@ namespace MovieAPIs
             return genresAndCountriesId;
         }
 
-        public async Task<FilmSearchByFilterResponse> GetFilmsByFiltersAsync(int countryId, int genreId, string imdbId = "", string keyword = "",
+        public async Task<FilmSearchByFilterResponse> GetFilmsByFiltersAsync(int countryId = (int)Filter.ALL, int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
             MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
             int yearFrom = 1000, int yearTo = 3000, int page = 1)
         {
@@ -65,8 +65,8 @@ namespace MovieAPIs
 
             var queryParams = new Dictionary<string, string>
             {
-                ["countries"] = countryId.ToString(),
-                ["genres"] = genreId.ToString(),
+                ["countries"] = countryId == (int)Filter.ALL? "": countryId.ToString(),
+                ["genres"] = genreId == (int)Filter.ALL ? "" : genreId.ToString(),
                 ["order"] = order.ToString(),
                 ["type"] = type.ToString(),
                 ["ratingFrom"] = ratingFrom.ToString(),
@@ -77,6 +77,7 @@ namespace MovieAPIs
                 ["keyword"] = keyword,
                 ["page"] = page.ToString()
             };
+
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, basePathSegment, apiVersion, filmsPathSegment);
             var responceBody = await client.GetStreamAsync(urlPathWithQuery);
             var filmsResponse = JsonSerializer.Deserialize<FilmSearchByFilterResponse>(responceBody, jsonSerializerOptions);
