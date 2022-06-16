@@ -1,0 +1,14 @@
+﻿
+namespace MovieAPIs.ResponseModels
+{
+    public class RelatedFilmResponceFilm
+    {
+        public int FilmId { get; set; }
+        public string NameRu { get; set; }
+        public string NameEn { get; set; }
+        public string NameOriginal { get; set; }
+        public string PosterUrl { get; set; }
+        public string PosterUrlPreview { get; set; }
+        public string RelationType { get; set; }
+    }
+}
