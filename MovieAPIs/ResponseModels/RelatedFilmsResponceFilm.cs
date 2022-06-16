@@ -1,7 +1,7 @@
 ﻿
 namespace MovieAPIs.ResponseModels
 {
-    public class RelatedFilmResponceFilm
+    public class RelatedFilmsResponceFilm
     {
         public int FilmId { get; set; }
         public string NameRu { get; set; }

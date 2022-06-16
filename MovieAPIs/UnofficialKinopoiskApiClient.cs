@@ -46,12 +46,12 @@ namespace MovieAPIs
             var filmsResponse = JsonSerializer.Deserialize<FilmSearchResponse>(responceBody, jsonSerializerOptions);
             return filmsResponse;
         }
-        public async Task<RelatedFilmResponce> GetRelatedFilmsAsync(int id)
+        public async Task<RelatedFilmsResponce> GetRelatedFilmsAsync(int id)
         {
             string apiVersion = "v2.2";
             string urlPath = UrlHelper.GetPath(basePathSegment, apiVersion, filmsPathSegment, id.ToString(), similarsPathSegment);
             var responceBody = await client.GetStreamAsync(urlPath);
-            var filmsResponce = JsonSerializer.Deserialize<RelatedFilmResponce>(responceBody, jsonSerializerOptions);
+            var filmsResponce = JsonSerializer.Deserialize<RelatedFilmsResponce>(responceBody, jsonSerializerOptions);
             return filmsResponce;
         }
     }
