@@ -28,6 +28,7 @@ namespace MovieAPIs.Utils
             var query = new StringBuilder();
             foreach (var queryParam in queryParams)
             {
+                if(!String.IsNullOrEmpty(queryParam.Value))
                 query.Append($"{queryParam.Key}={queryParam.Value}&");
             }
             return query.ToStringWithoutLastChar();

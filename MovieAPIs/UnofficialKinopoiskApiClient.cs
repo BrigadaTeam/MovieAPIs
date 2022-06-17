@@ -65,7 +65,7 @@ namespace MovieAPIs
 
             var queryParams = new Dictionary<string, string>
             {
-                ["countries"] = countryId == (int)Filter.ALL? "": countryId.ToString(),
+                ["countries"] = countryId == (int)Filter.ALL ? "" : countryId.ToString(),
                 ["genres"] = genreId == (int)Filter.ALL ? "" : genreId.ToString(),
                 ["order"] = order.ToString(),
                 ["type"] = type.ToString(),

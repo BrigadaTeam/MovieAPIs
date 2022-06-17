@@ -8,7 +8,7 @@ namespace MovieAPIs.ResponseModels
 {
     public class FilmSearchByFilterResponse
     {
-        public int PagesCount { get; set; }
-        public FilmSearchResponseFilms[] Items { get; set; }
+        public int TotalPages { get; set; }
+        public Film[] Items { get; set; }
     }
 }
