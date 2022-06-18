@@ -16,7 +16,7 @@ namespace TestConsole
             foreach (var item in answ.Result.Films)
             {
                 Console.WriteLine(item.NameRu);
-            }
+            }           
         }
     }
 }
