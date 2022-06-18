@@ -11,6 +11,7 @@ namespace MovieAPIs
         const string filmsPathSegment = "films";
         const string searchByKeywordPathSegment = "search-by-keyword";
         const string similarsPathSegment = "similars";
+        const string topPathSegment = "top";
         readonly HttpClient client;
         readonly JsonSerializerOptions jsonSerializerOptions;
 
@@ -53,6 +54,20 @@ namespace MovieAPIs
             var responceBody = await client.GetStreamAsync(urlPath);
             var filmsResponce = JsonSerializer.Deserialize<RelatedFilmsResponce>(responceBody, jsonSerializerOptions);
             return filmsResponce;
+        }
+
+        public async Task<FilmTopResponse> GetTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS, int page = 1)
+        {
+            string apiVersion = "v2.2";
+            var queryParams = new Dictionary<string, string>
+            {
+                ["type"] = topType.ToString(),
+                ["page"] = page.ToString()
+            };
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, basePathSegment, apiVersion, filmsPathSegment, topPathSegment);
+            var responceBody = await client.GetStreamAsync(urlPathWithQuery);
+            var filmsResponse = JsonSerializer.Deserialize<FilmTopResponse>(responceBody, jsonSerializerOptions);
+            return filmsResponse;
         }
     }
 }

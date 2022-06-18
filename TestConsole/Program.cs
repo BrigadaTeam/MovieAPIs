@@ -8,8 +8,15 @@ namespace TestConsole
     {
         static async Task Main(string[] args)
         {
-            string key = "Your api key";
+            string key = "API-KEY";
             var client = new UnofficialKinopoiskApiClient(key);
+
+            var answ = client.GetTopFilmsAsync();
+
+            foreach (var item in answ.Result.Films)
+            {
+                Console.WriteLine(item.NameRu);
+            }
         }
     }
 }
