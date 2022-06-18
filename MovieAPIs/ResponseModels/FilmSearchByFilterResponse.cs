@@ -7,6 +7,6 @@ namespace MovieAPIs.ResponseModels
         public int TotalPages { get; set; }
 
         [JsonPropertyName("items")]
-        public Film[] Filmss { get; set; }
+        public Film[] Films { get; set; }
     }
 }
