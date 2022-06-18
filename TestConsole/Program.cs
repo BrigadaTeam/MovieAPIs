@@ -11,11 +11,11 @@ namespace TestConsole
             string key = "Api-key";
             var client = new UnofficialKinopoiskApiClient(key);
 
-            var answ = client.GetFilmsByFiltersAsync();
+            var answ = client.GetGenresAndCountriesAsync();
 
-            foreach (var genre in answ.Result.Items)
+            foreach (var genre in answ.Result.Genres)
             {
-                Console.WriteLine(genre.NameRu);
+                Console.WriteLine(genre.Name);
             }
 
             /*var answ = client.GetGenresAndCountriesIdAsync();

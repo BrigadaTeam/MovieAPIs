@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace MovieAPIs.ResponseModels
 {
     public class FilmSearchByFilterResponse
     {
         public int TotalPages { get; set; }
-        public Film[] Items { get; set; }
+
+        [JsonPropertyName("items")]
+        public Film[] Filmss { get; set; }
     }
 }

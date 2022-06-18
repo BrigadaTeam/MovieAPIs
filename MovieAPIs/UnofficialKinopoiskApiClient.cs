@@ -48,7 +48,7 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
-        public async Task<GenresAndCountriesSearchResponse> GetGenresAndCountriesIdAsync()
+        public async Task<GenresAndCountriesSearchResponse> GetGenresAndCountriesAsync()
         {
             string apiVersion = "v2.2";
 
