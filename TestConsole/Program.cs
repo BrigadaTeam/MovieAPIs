@@ -8,27 +8,15 @@ namespace TestConsole
     {
         static async Task Main(string[] args)
         {
-            string key = "Api-key";
+            string key = "API-KEY";
             var client = new UnofficialKinopoiskApiClient(key);
 
-            var answ = client.GetGenresAndCountriesAsync();
+            var answ = client.GetTopFilmsAsync();
 
-            foreach (var genre in answ.Result.Genres)
+            foreach (var item in answ.Result.Films)
             {
-                Console.WriteLine(genre.Name);
-            }
-
-            /*var answ = client.GetGenresAndCountriesIdAsync();
-
-            foreach (var genre in answ.Result.Genres)
-            {
-                Console.WriteLine(genre.Name);
-            }
-
-            foreach (var genre in answ.Result.Countries)
-            {
-                Console.WriteLine(genre.Name);
-            }*/
+                Console.WriteLine(item.NameRu);
+            }           
         }
     }
 }
