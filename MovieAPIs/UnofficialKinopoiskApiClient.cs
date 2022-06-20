@@ -47,10 +47,8 @@ namespace MovieAPIs
 
         public async Task<GenresAndCountriesSearchResponse> GetGenresAndCountriesAsync()
         {
-            string apiVersion = "v2.2";
-
-            string urlPath = UrlHelper.GetPath(basePathSegment, apiVersion, filmsPathSegment, filtersPathSegment);
-            var responceBody = await client.GetStreamAsync(urlPath);
+            string genresAndCountriesUrl = configuration["unofficialKinopoisk:v22:filtersUrl"];
+            var responceBody = await client.GetStreamAsync(genresAndCountriesUrl);
             var genresAndCountriesId = JsonSerializer.Deserialize<GenresAndCountriesSearchResponse>(responceBody, jsonSerializerOptions);
             return genresAndCountriesId;
         }
@@ -59,8 +57,6 @@ namespace MovieAPIs
             MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
             int yearFrom = 1000, int yearTo = 3000, int page = 1)
         {
-            string apiVersion = "v2.2";
-
             var queryParams = new Dictionary<string, string>
             {
                 ["countries"] = countryId == (int)Filter.ALL ? "" : countryId.ToString(),
@@ -75,8 +71,8 @@ namespace MovieAPIs
                 ["keyword"] = keyword,
                 ["page"] = page.ToString()
             };
-
-            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, basePathSegment, apiVersion, filmsPathSegment);
+            string filmsUrl = configuration["unofficialKinopoisk:v22:filmsUrl"];
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, filmsUrl);
             var responceBody = await client.GetStreamAsync(urlPathWithQuery);
             var filmsResponse = JsonSerializer.Deserialize<FilmSearchByFilterResponse>(responceBody, jsonSerializerOptions);
             return filmsResponse;
@@ -94,13 +90,13 @@ namespace MovieAPIs
 
         public async Task<FilmTopResponse> GetTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS, int page = 1)
         {
-            string apiVersion = "v2.2";
             var queryParams = new Dictionary<string, string>
             {
                 ["type"] = topType.ToString(),
                 ["page"] = page.ToString()
             };
-            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, basePathSegment, apiVersion, filmsPathSegment, topPathSegment);
+            string topFilmsUrl = configuration["unofficialKinopoisk:v22:topUrl"];
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, topFilmsUrl);
             var responceBody = await client.GetStreamAsync(urlPathWithQuery);
             var filmsResponse = JsonSerializer.Deserialize<FilmTopResponse>(responceBody, jsonSerializerOptions);
             return filmsResponse;
