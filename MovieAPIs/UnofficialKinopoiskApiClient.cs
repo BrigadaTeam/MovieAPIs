@@ -44,6 +44,43 @@ namespace MovieAPIs
             var filmsResponse = JsonSerializer.Deserialize<FilmSearchResponse>(responceBody, jsonSerializerOptions);
             return filmsResponse;
         }
+
+        public async Task<GenresAndCountriesSearchResponse> GetGenresAndCountriesAsync()
+        {
+            string apiVersion = "v2.2";
+
+            string urlPath = UrlHelper.GetPath(basePathSegment, apiVersion, filmsPathSegment, filtersPathSegment);
+            var responceBody = await client.GetStreamAsync(urlPath);
+            var genresAndCountriesId = JsonSerializer.Deserialize<GenresAndCountriesSearchResponse>(responceBody, jsonSerializerOptions);
+            return genresAndCountriesId;
+        }
+
+        public async Task<FilmSearchByFilterResponse> GetFilmsByFiltersAsync(int countryId = (int)Filter.ALL, int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
+            MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
+            int yearFrom = 1000, int yearTo = 3000, int page = 1)
+        {
+            string apiVersion = "v2.2";
+
+            var queryParams = new Dictionary<string, string>
+            {
+                ["countries"] = countryId == (int)Filter.ALL ? "" : countryId.ToString(),
+                ["genres"] = genreId == (int)Filter.ALL ? "" : genreId.ToString(),
+                ["order"] = order.ToString(),
+                ["type"] = type.ToString(),
+                ["ratingFrom"] = ratingFrom.ToString(),
+                ["ratingTo"] = ratingTo.ToString(),
+                ["yearFrom"] = yearFrom.ToString(),
+                ["yearTo"] = yearTo.ToString(),
+                ["imdbId"] = imdbId,
+                ["keyword"] = keyword,
+                ["page"] = page.ToString()
+            };
+
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, basePathSegment, apiVersion, filmsPathSegment);
+            var responceBody = await client.GetStreamAsync(urlPathWithQuery);
+            var filmsResponse = JsonSerializer.Deserialize<FilmSearchByFilterResponse>(responceBody, jsonSerializerOptions);
+            return filmsResponse;
+        }
         public async Task<RelatedFilmsResponce> GetRelatedFilmsAsync(int id)
         {
             string filmsUrl = configuration["unofficialKinopoisk:v22:filmsUrl"];
@@ -52,6 +89,21 @@ namespace MovieAPIs
             var responceBody = await client.GetStreamAsync(urlPath);
             var filmsResponce = JsonSerializer.Deserialize<RelatedFilmsResponce>(responceBody, jsonSerializerOptions);
             return filmsResponce;
+
+        }
+
+        public async Task<FilmTopResponse> GetTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS, int page = 1)
+        {
+            string apiVersion = "v2.2";
+            var queryParams = new Dictionary<string, string>
+            {
+                ["type"] = topType.ToString(),
+                ["page"] = page.ToString()
+            };
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, basePathSegment, apiVersion, filmsPathSegment, topPathSegment);
+            var responceBody = await client.GetStreamAsync(urlPathWithQuery);
+            var filmsResponse = JsonSerializer.Deserialize<FilmTopResponse>(responceBody, jsonSerializerOptions);
+            return filmsResponse;
         }
     }
 }
