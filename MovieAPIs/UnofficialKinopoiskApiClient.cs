@@ -21,10 +21,7 @@ namespace MovieAPIs
             {
                 PropertyNameCaseInsensitive = true
             };
-            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            var exeLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            var pathToConfigFile = Path.Combine(Path.GetDirectoryName(exeLocation), "Configuration");
-            configuration = new JsonConfiguration(@"C:\Users\Максим\Desktop\MovieAPIs\MovieAPIs\MovieAPIs\Configuration\configuration.json");
+            configuration = new JsonConfiguration(@"Configuration\configuration.json");
         }
         public async Task<Film> GetFilmByIdAsync(int id)
         {
