@@ -2,6 +2,7 @@
 using System.Text.Json;
 using MovieAPIs.ResponseModels;
 using MovieAPIs.Utils;
+using System.Text;
 
 namespace MovieAPIs
 {
@@ -55,10 +56,51 @@ namespace MovieAPIs
             return filmsResponce;
         }
 
-       /* public async Task<RelatedFilmsResponce> GetRelatedFilmsAsync(string keyword, int page = 1)
-        { 
+
+        public async Task<FilmSearchResponse> GetFullListFilmsByKeywordAsync(string keyword)
+        {
+            string apiVersion = "v2.1";
+            var queryParams = new Dictionary<string, string>
+            {
+                ["keyword"] = keyword,
+                ["page"] = ""
+            };
+
+            var firstPage = await GetFilmsByKeywordAsync(keyword);
+            var urlPathsWithQuery = new string[firstPage.PagesCount];
+
+            for (int i = 2; i <= firstPage.PagesCount; i++)
+            {
+                var qParams = new Dictionary<string, string>
+                {
+                    ["keyword"] = keyword,
+                    ["page"] = i.ToString()
+                };
+
+                urlPathsWithQuery[i] = UrlHelper.GetPathWithQuery(qParams, basePathSegment, apiVersion, filmsPathSegment, searchByKeywordPathSegment);
+            }
+
+            var tasks = new List<Task<string>>();
+
+            foreach (var urlPathWithQuery in urlPathsWithQuery)
+            {
+                tasks.Add(client.GetStringAsync(urlPathWithQuery));
+            }
+
+            var data = new List<string>();
+
+            foreach (var task in tasks)
+            {
+                data.Add(await task);
+            }
+
+            byte[] byteArray = Encoding.UTF8.GetBytes(data.);
+            Stream stream = new MemoryStream(data);
+            var filmsResponse = JsonSerializer.DeserializeAsync<FilmSearchResponse>(data);
+
+            return filmsResponse;
+        }
 
 
-        }*/
     }
 }
