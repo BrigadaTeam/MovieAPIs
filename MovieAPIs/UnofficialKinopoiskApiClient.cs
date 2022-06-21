@@ -148,9 +148,7 @@ namespace MovieAPIs
                 data.Add(await task);
             }
 
-            byte[] byteArray = Encoding.UTF8.GetBytes(data.);
-            Stream stream = new MemoryStream(data);
-            var filmsResponse = JsonSerializer.DeserializeAsync<FilmSearchResponse>(data);
+            var filmsResponse = JsonSerializer.Deserialize<FilmSearchResponse>(String.Join("", data.ToArray()));
 
             return filmsResponse;
         }
