@@ -21,7 +21,7 @@ namespace MovieAPIs
             {
                 PropertyNameCaseInsensitive = true
             };
-            configuration = new JsonConfiguration(@"Configuration\configuration.json");
+            configuration = new JsonConfiguration(Path.Combine("Configuration", "configuration.json"));
         }
         public async Task<Film> GetFilmByIdAsync(int id)
         {
