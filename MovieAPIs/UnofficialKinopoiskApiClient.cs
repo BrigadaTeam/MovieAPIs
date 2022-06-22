@@ -8,8 +8,8 @@ namespace MovieAPIs
     public class UnofficialKinopoiskApiClient
     {
         readonly HttpClient client;
-        readonly JsonSerializerOptions jsonSerializerOptions;
         readonly IConfiguration configuration;
+        readonly ISerializer serializer;
 
         public UnofficialKinopoiskApiClient(string apiKey)
         {
@@ -17,10 +17,11 @@ namespace MovieAPIs
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
-            jsonSerializerOptions = new JsonSerializerOptions
+            var jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+            serializer = new DotNetJsonSerializer(jsonSerializerOptions);
             configuration = new JsonConfiguration(Path.Combine("Configuration", "configuration.json"));
         }
         public async Task<Film> GetFilmByIdAsync(int id)
@@ -28,7 +29,7 @@ namespace MovieAPIs
             string filmsUrl = configuration["unofficialKinopoisk:v22:filmsUrl"];
             string urlPath = UrlHelper.GetPath(filmsUrl, id.ToString());
             var responceBody = await client.GetStreamAsync(urlPath);
-            var film = JsonSerializer.Deserialize<Film>(responceBody, jsonSerializerOptions);
+            var film = serializer.Deserialize<Film>(responceBody);
             return film;
         }
         public async Task<FilmSearchResponse> GetFilmsByKeywordAsync(string keyword, int page = 1)
@@ -41,7 +42,7 @@ namespace MovieAPIs
             string searchByKeywordUrl = configuration["unofficialKinopoisk:v21:searchByKeywordUrl"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, searchByKeywordUrl);
             var responceBody = await client.GetStreamAsync(urlPathWithQuery);
-            var filmsResponse = JsonSerializer.Deserialize<FilmSearchResponse>(responceBody, jsonSerializerOptions);
+            var filmsResponse = serializer.Deserialize<FilmSearchResponse>(responceBody);
             return filmsResponse;
         }
 
@@ -49,7 +50,7 @@ namespace MovieAPIs
         {
             string genresAndCountriesUrl = configuration["unofficialKinopoisk:v22:filtersUrl"];
             var responceBody = await client.GetStreamAsync(genresAndCountriesUrl);
-            var genresAndCountriesId = JsonSerializer.Deserialize<GenresAndCountriesSearchResponse>(responceBody, jsonSerializerOptions);
+            var genresAndCountriesId = serializer.Deserialize<GenresAndCountriesSearchResponse>(responceBody);
             return genresAndCountriesId;
         }
 
@@ -74,7 +75,7 @@ namespace MovieAPIs
             string filmsUrl = configuration["unofficialKinopoisk:v22:filmsUrl"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, filmsUrl);
             var responceBody = await client.GetStreamAsync(urlPathWithQuery);
-            var filmsResponse = JsonSerializer.Deserialize<FilmSearchByFilterResponse>(responceBody, jsonSerializerOptions);
+            var filmsResponse = serializer.Deserialize<FilmSearchByFilterResponse>(responceBody);
             return filmsResponse;
         }
         public async Task<RelatedFilmsResponce> GetRelatedFilmsAsync(int id)
@@ -83,7 +84,7 @@ namespace MovieAPIs
             string similarsPathSegment = configuration["unofficialKinopoisk:similarsPathSegment"];
             string urlPath = UrlHelper.GetPath(filmsUrl, id.ToString(), similarsPathSegment);
             var responceBody = await client.GetStreamAsync(urlPath);
-            var filmsResponce = JsonSerializer.Deserialize<RelatedFilmsResponce>(responceBody, jsonSerializerOptions);
+            var filmsResponce = serializer.Deserialize<RelatedFilmsResponce>(responceBody);
             return filmsResponce;
 
         }
@@ -98,7 +99,7 @@ namespace MovieAPIs
             string topFilmsUrl = configuration["unofficialKinopoisk:v22:topUrl"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, topFilmsUrl);
             var responceBody = await client.GetStreamAsync(urlPathWithQuery);
-            var filmsResponse = JsonSerializer.Deserialize<FilmTopResponse>(responceBody, jsonSerializerOptions);
+            var filmsResponse = serializer.Deserialize<FilmTopResponse>(responceBody);
             return filmsResponse;
         }
     }
