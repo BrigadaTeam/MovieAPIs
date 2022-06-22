@@ -21,6 +21,21 @@ namespace MovieAPIs.Utils
             string query = GetQuery(queryParams);
             return $"{path}?{query}";
         }
+
+        internal static string[] GetPathWithQuery(Dictionary<string, string> queryParams, int pagesCount, params string[] pathSegments)
+        {
+            var paths = new string[pagesCount];
+
+            for(int page = 0; page < pagesCount; page++)
+            {
+                queryParams["page"] = (page + 1).ToString();
+
+                paths[page] = GetPathWithQuery(queryParams, pathSegments);
+            }
+
+            return paths;
+        }
+
         static string GetQuery(Dictionary<string, string> queryParams)
         {
             if (queryParams == null || queryParams.Count == 0)

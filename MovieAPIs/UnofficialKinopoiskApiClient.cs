@@ -114,25 +114,16 @@ namespace MovieAPIs
         public async Task<FilmSearchResponse> GetFullListFilmsByKeywordAsync(string keyword)
         {
             string apiVersion = "v2.1";
+
+            var firstPage = await GetFilmsByKeywordAsync(keyword);
+
             var queryParams = new Dictionary<string, string>
             {
                 ["keyword"] = keyword,
-                ["page"] = ""
+                ["page"] = "1"
             };
 
-            var firstPage = await GetFilmsByKeywordAsync(keyword);
-            var urlPathsWithQuery = new string[firstPage.PagesCount];
-
-            for (int i = 2; i <= firstPage.PagesCount; i++)
-            {
-                var qParams = new Dictionary<string, string>
-                {
-                    ["keyword"] = keyword,
-                    ["page"] = i.ToString()
-                };
-
-                urlPathsWithQuery[i] = UrlHelper.GetPathWithQuery(qParams, basePathSegment, apiVersion, filmsPathSegment, searchByKeywordPathSegment);
-            }
+            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, firstPage.PagesCount, basePathSegment, apiVersion, filmsPathSegment, searchByKeywordPathSegment);
 
             var tasks = new List<Task<string>>();
 
@@ -140,6 +131,8 @@ namespace MovieAPIs
             {
                 tasks.Add(client.GetStringAsync(urlPathWithQuery));
             }
+
+            Task.WaitAll(tasks.ToArray());
 
             var data = new List<string>();
 
@@ -153,6 +146,53 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
+        public async Task<FilmTopResponse> GetFullListTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS)
+        {
+            string apiVersion = "v2.2";
+            var firstPage = await GetTopFilmsAsync(topType);
+            var data = new List<string>();
 
+            var queryParams = new Dictionary<string, string>
+            {
+                ["type"] = topType.ToString(),
+                ["page"] = "1"
+            };
+
+            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, firstPage.PagesCount, basePathSegment, apiVersion, filmsPathSegment, topPathSegment);
+
+            var tasks = MultipleRequests(urlPathsWithQuery);
+            
+            foreach (var task in tasks)
+            {
+                data.Add(await task);             
+            }
+
+            var listOfFilms = new List<FilmTopResponse>();
+
+            foreach(var curData in data)
+            {
+                listOfFilms.Add(JsonSerializer.Deserialize<FilmTopResponse>(curData, jsonSerializerOptions));
+            }
+
+            return null;
+        }
+
+        private List<Task<string>> MultipleRequests(string[] urlPathsWithQuery)
+        {
+            var tasks = new List<Task<string>>();
+
+            var delay = 200;
+
+            foreach (var urlPathWithQuery in urlPathsWithQuery)
+            {
+                tasks.Add(client.GetStringAsync(urlPathWithQuery));
+
+                Thread.Sleep(delay);
+            }
+
+            Task.WaitAll(tasks.ToArray());
+
+            return tasks;
+        }
     }
 }
