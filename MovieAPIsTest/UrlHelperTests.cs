@@ -125,7 +125,7 @@ namespace MovieAPIsTest
             var queryParams = new Dictionary<string, string>
             {
                 ["one"] = "oneValue",
-                ["two"] = "twoValu"
+                ["two"] = "twoValue"
             };
             string expectedPathWithQuery = "home/room/bed?one=oneValue&two=twoValue";
 
