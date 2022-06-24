@@ -106,16 +106,14 @@ namespace MovieAPIs
 
         public async Task<FilmSearchResponse> GetAllPagesFilmsByKeywordAsync(string keyword)
         {
-            string apiVersion = "v2.1";
             var pagesCount = GetFilmsByKeywordAsync(keyword).Result.PagesCount;
-
             var queryParams = new Dictionary<string, string>
             {
                 ["keyword"] = keyword,
                 ["page"] = "1"
             };
-
-            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, basePathSegment, apiVersion, filmsPathSegment, searchByKeywordPathSegment);
+            string searchByKeywordUrl = configuration["unofficialKinopoisk:v21:searchByKeywordUrl"];
+            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, searchByKeywordUrl);
             var requestResponseBody = RequestHelper.GetListOfResponsesAsync(client, urlPathsWithQuery);
 
             return SerializeExtensions.GetFilmsByKeywordAllPages(await requestResponseBody);
@@ -125,9 +123,7 @@ namespace MovieAPIs
             MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
             int yearFrom = 1000, int yearTo = 3000)
         {
-            string apiVersion = "v2.2";
             var pagesCount = GetFilmsByFiltersAsync(countryId, genreId, imdbId, keyword, order, type, ratingFrom, ratingTo, yearFrom, yearTo).Result.TotalPages;
-
             var queryParams = new Dictionary<string, string>
             {
                 ["countries"] = countryId == (int)Filter.ALL ? "" : countryId.ToString(),
@@ -142,8 +138,8 @@ namespace MovieAPIs
                 ["keyword"] = keyword,
                 ["page"] = "1"
             };
-
-            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, basePathSegment, apiVersion, filmsPathSegment);
+            string filmsUrl = configuration["unofficialKinopoisk:v22:filmsUrl"];
+            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, filmsUrl);
             var requestResponseBody = RequestHelper.GetListOfResponsesAsync(client, urlPathsWithQuery);
 
             return SerializeExtensions.GetFilmsByFiltersAllPages(await requestResponseBody);
@@ -151,16 +147,14 @@ namespace MovieAPIs
 
         public async Task<FilmTopResponse> GetAllPagesTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS)
         {
-            string apiVersion = "v2.2";
             var pagesCount = GetTopFilmsAsync(topType).Result.PagesCount;
-
             var queryParams = new Dictionary<string, string>
             {
                 ["type"] = topType.ToString(),
                 ["page"] = "1"
             };
-
-            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, basePathSegment, apiVersion, filmsPathSegment, topPathSegment);
+            string topFilmsUrl = configuration["unofficialKinopoisk:v22:topUrl"];
+            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, topFilmsUrl);
             var requestResponseBody = RequestHelper.GetListOfResponsesAsync(client, urlPathsWithQuery);
 
             return SerializeExtensions.GetTopFilmsAllPages(await requestResponseBody);    
