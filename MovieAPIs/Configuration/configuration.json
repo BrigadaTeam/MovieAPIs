@@ -1,0 +1,28 @@
+{
+  "UnofficialKinopoisk": {
+    "V22": {
+      "FilmsUrl": "https://kinopoiskapiunofficial.tech/api/v2.2/films",
+      "FiltersUrl": "https://kinopoiskapiunofficial.tech/api/v2.2/films/filters",
+      "PremieresUrl": "https://kinopoiskapiunofficial.tech/api/v2.2/films/premieres",
+      "TopUrl": "https://kinopoiskapiunofficial.tech/api/v2.2/films/top"
+    },
+    "V21": {
+      "SearchByKeywordUrl": "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword",
+      "ReleasesUrl": "https://kinopoiskapiunofficial.tech/api/v2.1/films/releases"
+    },
+    "V1": {
+      "StaffUrl": "https://kinopoiskapiunofficial.tech/api/v1/staff",
+      "PersonsUrl": "https://kinopoiskapiunofficial.tech/api/v1/persons"
+    },
+    "SeasonsPathSegment": "seasons",
+    "FactsPathSegment": "facts",
+    "DistributtionsPathSegment": "distributtions",
+    "BoxOfficePathSegment": "box_office",
+    "AwardsPathSegment": "awards",
+    "VideosPathSegment": "videos",
+    "SimilarsPathSegment": "similars",
+    "ImagesPathSegment": "images",
+    "ReviewsPathSegment": "reviews",
+    "SequelsAndPrequelsPathSegment": "sequels_and_prequels"
+  }
+}
