@@ -109,7 +109,7 @@ namespace MovieAPIs
             string distributionsPathSegment = configuration["unofficialKinopoisk:distributionsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), distributionsPathSegment);
             var responceBody = await client.GetStreamAsync(urlPathWithQuery);
-            var filmsResponse = JsonSerializer.Deserialize<FilmDistributionsResponse>(responceBody, jsonSerializerOptions);
+            var filmsResponse = serializer.Deserialize<FilmDistributionsResponse>(responceBody);
             return filmsResponse;
         }
     }
