@@ -22,11 +22,9 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
     - name: Install dependencies
       run: dotnet restore
-    - name: Build Lib
-      run: dotnet build MovieAPIs/MovieAPIs.csproj --configuration Release --no-restore
-    - name: Build Tests
-      run: dotnet build MovieAPIsTest/MovieAPIsTest.csproj --configuration Release --no-restore
-    - name: Tests
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
       run : dotnet test --no-restore --verbosity normal
   build-win:
 
@@ -44,8 +42,6 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build MovieAPIs\MovieAPIs.csproj --configuration Release --no-restore
-    - name: Build Tests
-      run: dotnet build MovieAPIsTest\MovieAPIsTest.csproj --configuration Release --no-restore
-    - name: Tests
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
       run : dotnet test --no-restore --verbosity normal

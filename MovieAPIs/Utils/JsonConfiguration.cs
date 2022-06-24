@@ -14,7 +14,7 @@ namespace MovieAPIs.Utils
                 {
                     PropertyNameCaseInsensitive = true
                 };
-                root = JsonNode.Parse(json, jsonSerializerOptions);
+                root = JsonNode.Parse(json, jsonSerializerOptions)!; 
             }
         }
         string IConfiguration.this[string path] { 
@@ -23,7 +23,7 @@ namespace MovieAPIs.Utils
                 var currentNode = root;
                 foreach(var pathSegment in pathSegments)
                 {
-                    currentNode = currentNode[pathSegment];
+                    currentNode = currentNode[pathSegment]!;
                 }
                 return currentNode.ToString();
             } 

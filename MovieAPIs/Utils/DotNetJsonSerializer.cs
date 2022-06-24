@@ -11,7 +11,7 @@ namespace MovieAPIs.Utils
         }
         T ISerializer.Deserialize<T>(Stream stream)
         {
-            return JsonSerializer.Deserialize<T>(stream, options);
+            return JsonSerializer.Deserialize<T>(stream, options)!;
         }
     }
 }
