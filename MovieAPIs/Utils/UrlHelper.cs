@@ -6,7 +6,7 @@ namespace MovieAPIs.Utils
     {
         internal static string GetPath(params string[] pathSegments)
         {
-            if (pathSegments.Length == 0 || pathSegments == null)
+            if (pathSegments == null || pathSegments.Length == 0)
                 return string.Empty;
             var path = new StringBuilder();
             for(int i = 0; i < pathSegments.Length; i++)
@@ -19,6 +19,10 @@ namespace MovieAPIs.Utils
         {
             string path = GetPath(pathSegments);
             string query = GetQuery(queryParams);
+            if(path == string.Empty || query == string.Empty)
+            {
+                return path == string.Empty ? query : path;
+            }
             return $"{path}?{query}";
         }
 
@@ -36,7 +40,7 @@ namespace MovieAPIs.Utils
             return paths;
         }
 
-        static string GetQuery(Dictionary<string, string> queryParams)
+        internal static string GetQuery(Dictionary<string, string> queryParams)
         {
             if (queryParams == null || queryParams.Count == 0)
                 return string.Empty;
