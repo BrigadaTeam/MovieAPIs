@@ -111,11 +111,10 @@ namespace MovieAPIs
         }
 
 
-        public async Task<FilmSearchResponse> GetFullListFilmsByKeywordAsync(string keyword)
+        public async Task<FilmSearchResponse> GetAllPagesFilmsByKeywordAsync(string keyword)
         {
             string apiVersion = "v2.1";
-
-            var firstPage = await GetFilmsByKeywordAsync(keyword);
+            var pagesCount = GetFilmsByKeywordAsync(keyword).Result.PagesCount;
 
             var queryParams = new Dictionary<string, string>
             {
@@ -123,34 +122,44 @@ namespace MovieAPIs
                 ["page"] = "1"
             };
 
-            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, firstPage.PagesCount, basePathSegment, apiVersion, filmsPathSegment, searchByKeywordPathSegment);
+            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, basePathSegment, apiVersion, filmsPathSegment, searchByKeywordPathSegment);
+            var requestResponseBody = RequestHelper.GetListOfResponsesAsync(client, urlPathsWithQuery);
 
-            var tasks = new List<Task<string>>();
-
-            foreach (var urlPathWithQuery in urlPathsWithQuery)
-            {
-                tasks.Add(client.GetStringAsync(urlPathWithQuery));
-            }
-
-            Task.WaitAll(tasks.ToArray());
-
-            var data = new List<string>();
-
-            foreach (var task in tasks)
-            {
-                data.Add(await task);
-            }
-
-            var filmsResponse = JsonSerializer.Deserialize<FilmSearchResponse>(String.Join("", data.ToArray()));
-
-            return filmsResponse;
+            return SerializeExtensions.GetFilmsByKeywordAllPages(await requestResponseBody);
         }
 
-        public async Task<FilmTopResponse> GetFullListTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS)
+        public async Task<FilmSearchByFilterResponse> GetAllPagesFilmsByFilterAsync(int countryId = (int)Filter.ALL, int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
+            MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
+            int yearFrom = 1000, int yearTo = 3000)
         {
             string apiVersion = "v2.2";
-            var firstPage = await GetTopFilmsAsync(topType);
-            var data = new List<string>();
+            var pagesCount = GetFilmsByFiltersAsync(countryId, genreId, imdbId, keyword, order, type, ratingFrom, ratingTo, yearFrom, yearTo).Result.TotalPages;
+
+            var queryParams = new Dictionary<string, string>
+            {
+                ["countries"] = countryId == (int)Filter.ALL ? "" : countryId.ToString(),
+                ["genres"] = genreId == (int)Filter.ALL ? "" : genreId.ToString(),
+                ["order"] = order.ToString(),
+                ["type"] = type.ToString(),
+                ["ratingFrom"] = ratingFrom.ToString(),
+                ["ratingTo"] = ratingTo.ToString(),
+                ["yearFrom"] = yearFrom.ToString(),
+                ["yearTo"] = yearTo.ToString(),
+                ["imdbId"] = imdbId,
+                ["keyword"] = keyword,
+                ["page"] = "1"
+            };
+
+            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, basePathSegment, apiVersion, filmsPathSegment);
+            var requestResponseBody = RequestHelper.GetListOfResponsesAsync(client, urlPathsWithQuery);
+
+            return SerializeExtensions.GetFilmsByFiltersAllPages(await requestResponseBody);
+        }
+
+        public async Task<FilmTopResponse> GetAllPagesTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS)
+        {
+            string apiVersion = "v2.2";
+            var pagesCount = GetTopFilmsAsync(topType).Result.PagesCount;
 
             var queryParams = new Dictionary<string, string>
             {
@@ -158,41 +167,10 @@ namespace MovieAPIs
                 ["page"] = "1"
             };
 
-            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, firstPage.PagesCount, basePathSegment, apiVersion, filmsPathSegment, topPathSegment);
+            var urlPathsWithQuery = UrlHelper.GetPathWithQuery(queryParams, pagesCount, basePathSegment, apiVersion, filmsPathSegment, topPathSegment);
+            var requestResponseBody = RequestHelper.GetListOfResponsesAsync(client, urlPathsWithQuery);
 
-            var tasks = MultipleRequests(urlPathsWithQuery);
-            
-            foreach (var task in tasks)
-            {
-                data.Add(await task);             
-            }
-
-            var listOfFilms = new List<FilmTopResponse>();
-
-            foreach(var curData in data)
-            {
-                listOfFilms.Add(JsonSerializer.Deserialize<FilmTopResponse>(curData, jsonSerializerOptions));
-            }
-
-            return null;
-        }
-
-        private List<Task<string>> MultipleRequests(string[] urlPathsWithQuery)
-        {
-            var tasks = new List<Task<string>>();
-
-            var delay = 200;
-
-            foreach (var urlPathWithQuery in urlPathsWithQuery)
-            {
-                tasks.Add(client.GetStringAsync(urlPathWithQuery));
-
-                Thread.Sleep(delay);
-            }
-
-            Task.WaitAll(tasks.ToArray());
-
-            return tasks;
+            return SerializeExtensions.GetTopFilmsAllPages(await requestResponseBody);    
         }
     }
 }
