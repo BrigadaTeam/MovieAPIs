@@ -1,33 +1,29 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using System.Text.Json;
+﻿using System.Text.Json;
 using MovieAPIs.ResponseModels;
-using MovieAPIs.Utils;
 using System.Text;
 
 namespace MovieAPIs.Utils
 {
     static internal class SerializeExtensions
     {
-        private static JsonSerializerOptions jsonSerializerOptions;
-
+        private static ISerializer serializer;
         static SerializeExtensions()
         {
-            jsonSerializerOptions = new JsonSerializerOptions()
+            var jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+
+            serializer = new DotNetJsonSerializer(jsonSerializerOptions);
         }
-        static internal FilmTopResponse GetTopFilmsAllPages(List<string> requestResponseBody)
+
+        internal static FilmTopResponse GetTopFilmsAllPages(List<string> requestResponseBody)
         {
             var responses = new List<FilmTopResponse>();
         
             foreach (var curData in requestResponseBody)
             {
-                responses.Add(JsonSerializer.Deserialize<FilmTopResponse>(curData, jsonSerializerOptions));
+                responses.Add(serializer.Deserialize<FilmTopResponse>(StringToStream(curData)));
             }
 
             var filmsResponse = new FilmTopResponse()
@@ -39,18 +35,17 @@ namespace MovieAPIs.Utils
             foreach (var curData in responses)
             {
                 filmsResponse.Films = filmsResponse.Films.Concat(curData.Films).ToArray();
-
             }
             return filmsResponse;
         }
 
-        static internal FilmSearchResponse GetFilmsByKeywordAllPages(List<string> requestResponseBody)
+        internal static FilmSearchResponse GetFilmsByKeywordAllPages(List<string> requestResponseBody)
         {
             var responses = new List<FilmSearchResponse>();
 
             foreach (var curData in requestResponseBody)
             {
-                responses.Add(JsonSerializer.Deserialize<FilmSearchResponse>(curData, jsonSerializerOptions));
+                responses.Add(serializer.Deserialize<FilmSearchResponse>(StringToStream(curData)));
             }
 
             var filmsResponse = new FilmSearchResponse()
@@ -68,13 +63,13 @@ namespace MovieAPIs.Utils
             return filmsResponse;
         }
 
-        static internal FilmSearchByFilterResponse GetFilmsByFiltersAllPages(List<string> requestResponseBody)
+        internal static FilmSearchByFilterResponse GetFilmsByFiltersAllPages(List<string> requestResponseBody)
         {
             var responses = new List<FilmSearchByFilterResponse>();
 
             foreach (var curData in requestResponseBody)
             {
-                responses.Add(JsonSerializer.Deserialize<FilmSearchByFilterResponse>(curData, jsonSerializerOptions));
+                responses.Add(serializer.Deserialize<FilmSearchByFilterResponse>(StringToStream(curData)));
             }
 
             var filmsResponse = new FilmSearchByFilterResponse()
@@ -89,6 +84,13 @@ namespace MovieAPIs.Utils
             }
 
             return filmsResponse;
+        }
+
+        private static Stream StringToStream(string str)
+        {
+            byte[] byteArray = Encoding.ASCII.GetBytes(str);
+
+            return new MemoryStream(byteArray);
         }
     }
 }

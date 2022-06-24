@@ -9,7 +9,6 @@ namespace MovieAPIs.Utils
     internal static class RequestHelper
     {
         private static int delay = 200; // to avoid error 429
-
         public static async Task<List<string>> GetListOfResponsesAsync(HttpClient client, string[] urlPathsWithQuery)
         {
             var tasks = new List<Task<string>>();
