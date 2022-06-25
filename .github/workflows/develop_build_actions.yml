@@ -7,7 +7,7 @@ on:
     branches: [ develop ] 
 
 jobs:    
-  build-linux-dotnet6.x:
+  build-linux-dotnet6:
 
     runs-on: ubuntu-latest
     strategy:
@@ -27,7 +27,7 @@ jobs:
     - name: Test
       run : dotnet test --no-restore --verbosity normal
 
-  build-linux-dotnet5.x:
+  build-linux-dotnet5:
 
     runs-on: ubuntu-latest
     strategy:
@@ -47,7 +47,7 @@ jobs:
     - name: Test
       run : dotnet test --no-restore --verbosity normal
       
-  build-win-dotnet6.x:
+  build-win-dotnet6:
 
     runs-on: windows-latest
     strategy:
@@ -67,7 +67,7 @@ jobs:
     - name: Test
       run : dotnet test --no-restore --verbosity normal
 
-   build-win-dotnet5.x:
+   build-win-dotnet5:
 
     runs-on: windows-latest
     strategy:
