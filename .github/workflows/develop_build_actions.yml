@@ -67,7 +67,7 @@ jobs:
     - name: Test
       run : dotnet test --no-restore --verbosity normal
 
-   build-win-dotnet5:
+  build-win-dotnet5:
 
     runs-on: windows-latest
     strategy:
