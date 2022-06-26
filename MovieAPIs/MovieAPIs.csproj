@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework Condition="'$(DotNetTargetFramework)' == 'net5'">net5.0</TargetFramework>
-	<TargetFramework Condition="'$(DotNetTargetFramework)' != 'net5'">net6.0</TargetFramework>
+	<TargetFrameworks>net5.0;net6.0</TargetFrameworks>
     <Nullable>enable</Nullable>
 	<NoWarn>CS8618</NoWarn>
   </PropertyGroup>
