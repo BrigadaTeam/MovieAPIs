@@ -41,7 +41,7 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -p:DotNetTargetFramework=net5.0
     - name: Build
       run: dotnet build -p:DotNetTargetFramework=net5.0 --configuration Release --no-restore
     - name: Test
@@ -81,7 +81,7 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -p:DotNetTargetFramework=net5.0
     - name: Build
       run: dotnet build -p:DotNetTargetFramework=net5.0 --configuration Release --no-restore
     - name: Test
