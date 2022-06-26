@@ -20,6 +20,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install dependencies
+      run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
@@ -38,6 +40,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install dependencies
+      run: dotnet restore
     - name: Build
       run: dotnet build -p:DotNetTargetFramework=net5.0 --configuration Release --no-restore
     - name: Test
@@ -56,6 +60,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install dependencies
+      run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
@@ -74,6 +80,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install dependencies
+      run: dotnet restore
     - name: Build
       run: dotnet build -p:DotNetTargetFramework=net5.0 --configuration Release --no-restore
     - name: Test
