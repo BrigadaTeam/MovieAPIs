@@ -4,10 +4,9 @@ namespace MovieAPIs.ResponseModels
 {
     public class FilmDistributionsResponse
     {
-        public int Total { get; set; }
 
         [JsonPropertyName("items")]
-        public FilmDistributionsResponseItems[] Distributions { get; set; }
+        public FilmDistributionsResponseItems[] FilmDistributions { get; set; }
 
     }
 }
