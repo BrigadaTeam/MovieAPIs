@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build -p:LibraryFramework=net6.0 --configuration Release --no-restore
     - name: Test
       run : dotnet test --no-restore --verbosity normal
 
@@ -43,7 +43,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build -p:LibraryFramework=net5.0 --configuration Release --no-restore
     - name: Test
       run : dotnet test --no-restore --verbosity normal
       
@@ -63,7 +63,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build -p:LibraryFramework=net6.0 --configuration Release --no-restore
     - name: Test
       run : dotnet test --no-restore --verbosity normal
 
@@ -83,7 +83,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build -p:LibraryFramework=net5.0 --configuration Release --no-restore
     - name: Test
       run : dotnet test --no-restore --verbosity normal
 
