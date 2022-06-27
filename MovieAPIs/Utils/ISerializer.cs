@@ -1,7 +1,9 @@
-﻿namespace MovieAPIs.Utils
+﻿using System.IO;
+
+namespace MovieAPIs.Utils
 {
     internal interface ISerializer
     {
-        internal T Deserialize<T>(Stream stream);
+        internal T Deserialize<T>(string json);
     }
 }

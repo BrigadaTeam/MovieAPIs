@@ -7,12 +7,12 @@ on:
     branches: [ develop ] 
 
 jobs:    
-  build-linux:
+  build-linux-dotnet6:
 
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: ['6.x']
+        dotnet-version: [ '6.x' ]
 
     steps:
     - uses: actions/checkout@v3
@@ -21,19 +21,38 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
     - name: Install dependencies
-      run: dotnet restore
-    - name: Build Lib
-      run: dotnet build MovieAPIs/MovieAPIs.csproj --configuration Release --no-restore
-    - name: Build Tests
-      run: dotnet build MovieAPIsTest/MovieAPIsTest.csproj --configuration Release --no-restore
-    - name: Tests
-      run : dotnet test --no-restore --verbosity normal
-  build-win:
+      run: dotnet restore -p:LibraryFramework=net6.0
+    - name: Build
+      run: dotnet build -p:LibraryFramework=net6.0 --configuration Release --no-restore
+    - name: Test
+      run : dotnet test -p:LibraryFramework=net6.0 --no-restore --verbosity normal
+
+  build-linux-dotnet5:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '5.x' ]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install dependencies
+      run: dotnet restore -p:LibraryFramework=net5.0
+    - name: Build
+      run: dotnet build -p:LibraryFramework=net5.0 --configuration Release --no-restore
+    - name: Test
+      run : dotnet test -p:LibraryFramework=net5.0 --no-restore --verbosity normal
+      
+  build-win-dotnet6:
 
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet-version: ['6.x']
+        dotnet-version: [ '6.x' ]
 
     steps:
     - uses: actions/checkout@v3
@@ -42,10 +61,30 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -p:LibraryFramework=net6.0
     - name: Build
-      run: dotnet build MovieAPIs\MovieAPIs.csproj --configuration Release --no-restore
-    - name: Build Tests
-      run: dotnet build MovieAPIsTest\MovieAPIsTest.csproj --configuration Release --no-restore
-    - name: Tests
-      run : dotnet test --no-restore --verbosity normal
+      run: dotnet build -p:LibraryFramework=net6.0 --configuration Release --no-restore
+    - name: Test
+      run : dotnet test -p:LibraryFramework=net6.0 --no-restore --verbosity normal
+
+  build-win-dotnet5:
+
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '5.x' ]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install dependencies
+      run: dotnet restore -p:LibraryFramework=net5.0
+    - name: Build
+      run: dotnet build -p:LibraryFramework=net5.0 --configuration Release --no-restore
+    - name: Test
+      run : dotnet test -p:LibraryFramework=net5.0 --no-restore --verbosity normal
+
+  
