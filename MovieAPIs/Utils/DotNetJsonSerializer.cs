@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.IO;
+using System.Text.Json;
 
 namespace MovieAPIs.Utils
 {
@@ -9,9 +10,9 @@ namespace MovieAPIs.Utils
         {
             this.options = options;
         }
-        T ISerializer.Deserialize<T>(Stream stream)
+        T ISerializer.Deserialize<T>(string json)
         {
-            return JsonSerializer.Deserialize<T>(stream, options);
+            return JsonSerializer.Deserialize<T>(json, options)!;
         }
     }
 }
