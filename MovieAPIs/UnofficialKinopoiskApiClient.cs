@@ -112,7 +112,7 @@ namespace MovieAPIs
             string filmsUrl = configuration["unofficialKinopoisk:v22:filmsUrl"];
             string factsAndMistakesPathSegment = configuration["unofficialKinopoisk:factsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), factsAndMistakesPathSegment);
-            var responceBody = await client.GetStreamAsync(urlPathWithQuery);
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
             var filmsResponse = serializer.Deserialize<FilmFactsAndMistakesResponse>(responceBody);
             return filmsResponse;
         }
