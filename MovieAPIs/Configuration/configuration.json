@@ -16,7 +16,7 @@
     },
     "SeasonsPathSegment": "seasons",
     "FactsPathSegment": "facts",
-    "DistributtionsPathSegment": "distributtions",
+    "DistributionsPathSegment": "distributions",
     "BoxOfficePathSegment": "box_office",
     "AwardsPathSegment": "awards",
     "VideosPathSegment": "videos",
