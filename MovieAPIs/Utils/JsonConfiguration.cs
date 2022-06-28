@@ -1,31 +1,32 @@
-﻿using System.Text.Json.Nodes;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace MovieAPIs.Utils
 {
     internal class JsonConfiguration : IConfiguration
     {
-        JsonNode root;
+        JsonDocument document;
         internal JsonConfiguration(string pathToConfigFile)
         {
             using(var reader = new StreamReader(pathToConfigFile))
             {
-                string json = reader.ReadToEnd();
-                var jsonSerializerOptions = new JsonNodeOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-                root = JsonNode.Parse(json, jsonSerializerOptions);
+                string json = reader.ReadToEnd(); 
+                document = JsonDocument.Parse(json);
             }
         }
         string IConfiguration.this[string path] { 
             get {
                 string[] pathSegments = path.Split(':', StringSplitOptions.RemoveEmptyEntries);
-                var currentNode = root;
+                var currentNode = document.RootElement;
                 foreach(var pathSegment in pathSegments)
                 {
-                    currentNode = currentNode[pathSegment];
+                    currentNode = currentNode.EnumerateObject()
+                        .FirstOrDefault(x => string.Compare(x.Name, pathSegment, StringComparison.OrdinalIgnoreCase) == 0)
+                        .Value;
                 }
-                return currentNode.ToString();
+                return currentNode.ToString()!;
             } 
         }
     }
