@@ -1,11 +1,10 @@
-﻿using System.IO;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace MovieAPIs.Utils
 {
     internal class DotNetJsonSerializer : ISerializer
     {
-        JsonSerializerOptions options;
+        readonly JsonSerializerOptions options;
         internal DotNetJsonSerializer(JsonSerializerOptions options)
         {
             this.options = options;
