@@ -14,7 +14,7 @@ namespace MovieAPIs.Utils
             {
                 path.Append($"{pathSegments[i]}/");
             }
-            return path.ToStringWithoutLastChar();
+            return path.ToString().TrimEnd('/');
         }
         internal static string GetPathWithQuery(Dictionary<string, string> queryParams, params string[] pathSegments)
         {
@@ -36,7 +36,7 @@ namespace MovieAPIs.Utils
                 if(!string.IsNullOrEmpty(queryParam.Value))
                 query.Append($"{queryParam.Key}={queryParam.Value}&");
             }
-            return query.ToStringWithoutLastChar();
+            return query.ToString().TrimEnd('&');
         }
     }
 }

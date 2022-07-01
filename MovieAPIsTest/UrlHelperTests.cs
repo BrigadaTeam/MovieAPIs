@@ -10,7 +10,7 @@ namespace MovieAPIsTest
         [TestCase(new string[] { "path segment" }, "path segment")]
         [TestCase(new string[] { "" }, "")]
         [TestCase(new string[] { "home", "room", "bed" }, "home/room/bed")]
-        public void GetPathTests(string[] pathSegments, string expectedPath)
+        public void GetPathTest(string[] pathSegments, string expectedPath)
         {
             string path = UrlHelper.GetPath(pathSegments);
 
