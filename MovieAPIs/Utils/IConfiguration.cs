@@ -12,10 +12,8 @@ namespace MovieAPIs.Utils
 
     internal class InvalidPathException : Exception
     {
-        public InvalidPathException(string message) : base(message)
-        {
-
-        }
+        public InvalidPathException(string message) : base(message) { }
+        public InvalidPathException(string message, Exception innerException) : base(message, innerException) { }
     }
 
     internal class JsonConfiguration : IConfiguration
@@ -36,7 +34,7 @@ namespace MovieAPIs.Utils
                 try
                 {
                     if (string.IsNullOrEmpty(path))
-                        throw new InvalidPathException("Invalid path");
+                        throw new InvalidPathException("Invalid path for configuration file.");
 
                     string[] pathSegments = path.Split(':', StringSplitOptions.RemoveEmptyEntries);
                     var currentNode = document.RootElement;
@@ -49,13 +47,13 @@ namespace MovieAPIs.Utils
                     }
 
                     if (currentNode.ValueKind != JsonValueKind.String)
-                        throw new InvalidPathException("Invalid path");
+                        throw new InvalidPathException("Invalid path for configuration file.");
 
                     return currentNode.ToString()!;
                 }
-                catch(InvalidOperationException)
+                catch(InvalidOperationException e)
                 {
-                    throw new InvalidPathException("Invalid path");
+                    throw new InvalidPathException("Invalid path for configuration file.", e);
                 }
             }
         }
