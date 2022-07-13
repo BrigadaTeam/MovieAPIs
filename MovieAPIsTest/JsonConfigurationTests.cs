@@ -12,7 +12,7 @@ namespace MovieAPIsTest
     public class JsonConfigurationTests
     {
 
-        IConfiguration jsonConfiguration;
+        IConfiguration jsonConfiguration = null;
         const string pathToFile = "test.json";
         [OneTimeSetUp]
         public void CreateConfigurationFile()
