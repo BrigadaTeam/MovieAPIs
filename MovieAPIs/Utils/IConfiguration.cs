@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace MovieAPIs.Utils
 {
@@ -18,13 +17,17 @@ namespace MovieAPIs.Utils
 
     internal class JsonConfiguration : IConfiguration
     {
-        readonly JsonDocument document;
+        readonly JsonNode root;
         internal JsonConfiguration(string pathToConfigFile)
         {
             using (var reader = new StreamReader(pathToConfigFile))
             {
                 string json = reader.ReadToEnd();
-                document = JsonDocument.Parse(json);
+                var jsonSerializerOptions = new JsonNodeOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                root = JsonNode.Parse(json, jsonSerializerOptions)!;
             }
         }
         string IConfiguration.this[string path]
@@ -37,21 +40,16 @@ namespace MovieAPIs.Utils
                         throw new InvalidPathException("Invalid path for configuration file.");
 
                     string[] pathSegments = path.Split(':', StringSplitOptions.RemoveEmptyEntries);
-                    var currentNode = document.RootElement;
+                    var currentNode = root;
 
                     foreach (var pathSegment in pathSegments)
                     {
-                        currentNode = currentNode.EnumerateObject()
-                            .FirstOrDefault(x => string.Compare(x.Name, pathSegment, StringComparison.OrdinalIgnoreCase) == 0)
-                            .Value;
+                        currentNode = currentNode[pathSegment]!;
                     }
 
-                    if (currentNode.ValueKind != JsonValueKind.String)
-                        throw new InvalidPathException("Invalid path for configuration file.");
-
-                    return currentNode.ToString()!;
+                    return currentNode.ToString();
                 }
-                catch(InvalidOperationException e)
+                catch(NullReferenceException e)
                 {
                     throw new InvalidPathException("Invalid path for configuration file.", e);
                 }
