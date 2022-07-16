@@ -6,43 +6,13 @@ namespace MovieAPIsTest
 {
     public class UrlHelperTests
     {
-        [Test]
-        public void GetPathWithNullPathSegmentTest()
+        [TestCase(null, "")]
+        [TestCase(new string[] { "path segment" }, "path segment")]
+        [TestCase(new string[] { "" }, "")]
+        [TestCase(new string[] { "home", "room", "bed" }, "home/room/bed")]
+        public void GetPathTest(string[] pathSegments, string expectedPath)
         {
-            string path = UrlHelper.GetPath(null);
-
-            Assert.IsEmpty(path);
-        }
-
-        [Test]
-        public void GetPathWithEmptyPathSegmentTest()
-        {
-            string path = UrlHelper.GetPath();
-
-            Assert.IsEmpty(path);
-        }
-
-        [Test]
-        public void GetPathWithOnePathSegmentTest()
-        {
-            string pathSegment = "path segment";
-
-            string path = UrlHelper.GetPath(pathSegment);
-
-            Assert.AreEqual(pathSegment, path);
-        }
-
-        [Test]
-        public void GetPathWithMultipleSegmentsTest()
-        {
-            var pathSegments = new string[] { "home", "room", "bed" };
-            string expectedPath = "home/room/bed";
-
             string path = UrlHelper.GetPath(pathSegments);
-
-            Assert.AreEqual(expectedPath, path);
-
-            path = UrlHelper.GetPath(pathSegments[0], pathSegments[1], pathSegments[2]);
 
             Assert.AreEqual(expectedPath, path);
         }
