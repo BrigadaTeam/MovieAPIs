@@ -1,4 +1,4 @@
-﻿namespace MovieAPIs.ResponseModels
+﻿namespace MovieAPIs.Models
 {
     public class Film
     {
