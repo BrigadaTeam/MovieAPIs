@@ -38,10 +38,9 @@ namespace MovieAPIsTest
             File.Delete(pathToFile);
         }
 
-        [TestCase("test:v1", "Testversion1")]
-        [TestCase("test:v2", "Testversion2")]
-        [TestCase("word", "Key")]
-        [TestCase("WORD", "Key")]
+        [TestCase("Test:V1", "Testversion1")]
+        [TestCase("Test:V2", "Testversion2")]
+        [TestCase("Word", "Key")]
         public void IndexerWithValidPathTest(string path, string expected)
         {
             string actual = jsonConfiguration[path];
@@ -52,6 +51,7 @@ namespace MovieAPIsTest
         [TestCase("Invalid")]
         [TestCase("")]
         [TestCase(null)]
+        [TestCase("TEST:V1")]
         public void IndexWithInvalidPathTest(string path)
         {
             Assert.Throws<InvalidPathException>(() => { 

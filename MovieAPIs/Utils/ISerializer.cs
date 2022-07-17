@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Text.Json;
+﻿using Newtonsoft.Json;
 
 namespace MovieAPIs.Utils
 {
@@ -8,16 +7,11 @@ namespace MovieAPIs.Utils
         internal T Deserialize<T>(string json);
     }
 
-    internal class DotNetJsonSerializer : ISerializer
+    internal class NewtonsoftJsonSerializer : ISerializer
     {
-        readonly JsonSerializerOptions options;
-        internal DotNetJsonSerializer(JsonSerializerOptions options)
-        {
-            this.options = options;
-        }
         T ISerializer.Deserialize<T>(string json)
         {
-            return JsonSerializer.Deserialize<T>(json, options)!;
+            return JsonConvert.DeserializeObject<T>(json)!;
         }
     }
 }

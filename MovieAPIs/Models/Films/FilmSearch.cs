@@ -1,7 +1,7 @@
 ﻿
-namespace MovieAPIs.ResponseModels
+namespace MovieAPIs.Models
 {
-    public class FilmSearchResponseFilm
+    public class FilmSearch
     {
         public int FilmId { get; set; }
         public string NameRu { get; set; }

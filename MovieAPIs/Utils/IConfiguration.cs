@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text.Json.Nodes;
+using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace MovieAPIs.Utils
 {
@@ -12,47 +13,38 @@ namespace MovieAPIs.Utils
     internal class InvalidPathException : Exception
     {
         public InvalidPathException(string message) : base(message) { }
-        public InvalidPathException(string message, Exception innerException) : base(message, innerException) { }
     }
 
     internal class JsonConfiguration : IConfiguration
     {
-        readonly JsonNode root;
+        readonly JObject root;
         internal JsonConfiguration(string pathToConfigFile)
         {
             using (var reader = new StreamReader(pathToConfigFile))
             {
                 string json = reader.ReadToEnd();
-                var jsonSerializerOptions = new JsonNodeOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-                root = JsonNode.Parse(json, jsonSerializerOptions)!;
+
+                root = JObject.Parse(json);
             }
         }
         string IConfiguration.this[string path]
         {
             get
             {
-                try
-                {
                     if (string.IsNullOrEmpty(path))
                         throw new InvalidPathException("Invalid path for configuration file.");
 
                     string[] pathSegments = path.Split(':', StringSplitOptions.RemoveEmptyEntries);
-                    var currentNode = root;
-
-                    foreach (var pathSegment in pathSegments)
+                    var jsonPath = new StringBuilder("$");
+                    foreach(var pathSegment in pathSegments)
                     {
-                        currentNode = currentNode[pathSegment]!;
+                        jsonPath.Append($".{pathSegment}");
                     }
+                    var configValue = root.SelectToken(jsonPath.ToString());
+                    if(configValue == null)
+                        throw new InvalidPathException("Invalid path for configuration file.");
 
-                    return currentNode.ToString();
-                }
-                catch(NullReferenceException e)
-                {
-                    throw new InvalidPathException("Invalid path for configuration file.", e);
-                }
+                    return configValue.ToString();
             }
         }
     }

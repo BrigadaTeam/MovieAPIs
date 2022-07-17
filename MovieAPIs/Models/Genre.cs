@@ -1,12 +1,12 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
-namespace MovieAPIs.ResponseModels
+namespace MovieAPIs.Models
 {
     public class Genre
     {
         public int Id { get; set; }
 
-        [JsonPropertyName("genre")]
+        [JsonProperty("genre")]
         public string Name { get; set; }
     }
 }

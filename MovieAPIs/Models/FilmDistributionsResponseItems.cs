@@ -1,5 +1,5 @@
 ﻿
-namespace MovieAPIs.ResponseModels
+namespace MovieAPIs.Models
 {
     public class FilmDistributionsResponseItems
     {
