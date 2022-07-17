@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MovieAPIs.Models;
 using MovieAPIs.Utils;
+using MovieAPIs.Models.Responses;
 
 namespace MovieAPIs
 {
@@ -109,6 +110,16 @@ namespace MovieAPIs
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), distributionsPathSegment);
             var responceBody = await client.GetStringAsync(urlPathWithQuery);
             var filmsResponse = serializer.Deserialize<FilmsResponse<FilmDistributionsResponseItems>>(responceBody);
+            return filmsResponse;
+        }
+
+        public async Task<BoxOfficeResponse> GetBoxOfficeByIdAsync(int id)
+        {
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string boxOfficePathSegment = configuration["UnofficialKinopoisk:BoxOfficePathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), boxOfficePathSegment);
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<BoxOfficeResponse>(responceBody);
             return filmsResponse;
         }
     }
