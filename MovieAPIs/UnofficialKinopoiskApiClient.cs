@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MovieAPIs.Models;
 using MovieAPIs.Utils;
+using MovieAPIs.Models.Responses;
 
 namespace MovieAPIs
 {
