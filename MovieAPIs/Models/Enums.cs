@@ -1,4 +1,4 @@
-﻿namespace MovieAPIs.Utils
+﻿namespace MovieAPIs.Models
 { 
 
     public enum Tops

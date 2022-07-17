@@ -1,11 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks Condition="'$(LibraryFramework)'==''">net5.0;net6.0</TargetFrameworks>
-	<TargetFrameworks Condition="'$(LibraryFramework)'!=''">$(LibraryFramework)</TargetFrameworks>
+	<TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
 	<NoWarn>CS8618</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="Configuration\configuration.json">
