@@ -102,13 +102,13 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
-        public async Task<FilmFactsAndMistakesResponse> GetFilmFactsAndMistakesAsync(int id)
+        public async Task<FactsAndMistakesResponse> GetFilmFactsAndMistakesAsync(int id)
         {
-            string filmsUrl = configuration["unofficialKinopoisk:v22:filmsUrl"];
-            string factsAndMistakesPathSegment = configuration["unofficialKinopoisk:factsPathSegment"];
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string factsAndMistakesPathSegment = configuration["UnofficialKinopoisk:FactsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), factsAndMistakesPathSegment);
             var responceBody = await client.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmFactsAndMistakesResponse>(responceBody);
+            var filmsResponse = serializer.Deserialize<FactsAndMistakesResponse>(responceBody);
             return filmsResponse;
         }
 
