@@ -112,7 +112,7 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
-        public async Task<FilmsResponse<Season>>GetSeasonsDataByIdAsync(int id)
+        public async Task<FilmsResponse<Season>> GetSeasonsDataByIdAsync(int id)
         {
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string seasonsPathSegment = configuration["UnofficialKinopoisk:SeasonsPathSegment"];
