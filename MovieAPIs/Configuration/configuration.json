@@ -8,6 +8,7 @@
     },
     "V21": {
       "SearchByKeywordUrl": "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword",
+      "FilmsUrl": "https://kinopoiskapiunofficial.tech/api/v2.1/films",
       "ReleasesUrl": "https://kinopoiskapiunofficial.tech/api/v2.1/films/releases"
     },
     "V1": {
