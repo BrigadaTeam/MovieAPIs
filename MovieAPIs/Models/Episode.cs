@@ -1,4 +1,4 @@
-﻿namespace MovieAPIs.Models.Serials
+﻿namespace MovieAPIs.Models
 {
     public class Episode
     {

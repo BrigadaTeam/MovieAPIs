@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MovieAPIs.Models;
 using MovieAPIs.Utils;
-using MovieAPIs.Models.Responses;
 
 namespace MovieAPIs
 {
@@ -113,13 +112,13 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
-        public async Task<SerialResponse> GetSeasonDataByIdAsync(int id)
+        public async Task<FilmsResponse<Season>>GetSeasonsDataByIdAsync(int id)
         {
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string seasonsPathSegment = configuration["UnofficialKinopoisk:SeasonsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), seasonsPathSegment);
             var responceBody = await client.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<SerialResponse>(responceBody);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<Season>>(responceBody);
             return filmsResponse;
         }
 
