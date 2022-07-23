@@ -122,6 +122,16 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
+        public async Task<FilmsResponse<MonetizationInfo>> GetBoxOfficeByIdAsync(int id)
+        {
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string boxOfficePathSegment = configuration["UnofficialKinopoisk:BoxOfficePathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), boxOfficePathSegment);
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<MonetizationInfo>>(responceBody);
+            return filmsResponse;
+        }
+
         public async Task<FilmsResponse<Season>> GetSeasonsDataByIdAsync(int id)
         {
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
@@ -131,6 +141,5 @@ namespace MovieAPIs
             var filmsResponse = serializer.Deserialize<FilmsResponse<Season>>(responceBody);
             return filmsResponse;
         }
-
     }
 }
