@@ -145,6 +145,7 @@ namespace MovieAPIs
             var responceBody = await client.GetStringAsync(urlPathWithQuery);
             var filmsResponse = serializer.Deserialize<ViewerReviewsResponse>(responceBody);
             return filmsResponse;
+        }
 
         public async Task<FilmsResponse<MonetizationInfo>> GetBoxOfficeByIdAsync(int id)
         {
