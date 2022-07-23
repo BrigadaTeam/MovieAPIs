@@ -122,6 +122,20 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
+        public async Task<ViewerReviewsResponse> GetViewerReviewsByIdAsync(int id, int page = 1, ReviewOrder order = ReviewOrder.DATE_DESC)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["page"] = page.ToString(),
+                ["order"] = order.ToString(),
+            };
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string viewerReviewsPathSegment = configuration["UnofficialKinopoisk:ReviewsPathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, UrlHelper.GetPath(filmsUrl, id.ToString(), viewerReviewsPathSegment));
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<ViewerReviewsResponse>(responceBody);
+            return filmsResponse;
+
         public async Task<FilmsResponse<MonetizationInfo>> GetBoxOfficeByIdAsync(int id)
         {
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
