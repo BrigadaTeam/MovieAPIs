@@ -112,7 +112,7 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
-        public async Task<ReleaseResponse> GetDigitalReleasesAsync(int year, Months month, int page = 1)
+        public async Task<FilmsResponseWithPagesCount<FilmRelease>> GetDigitalReleasesAsync(int year, Months month, int page = 1)
         {
             var queryParams = new Dictionary<string, string>
             {
@@ -123,7 +123,7 @@ namespace MovieAPIs
             string releaseFilmsUrl = configuration["UnofficialKinopoisk:V21:ReleasesUrl"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, releaseFilmsUrl);
             var responceBody = await client.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<ReleaseResponse>(responceBody);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmRelease>>(responceBody);
             return filmsResponse;
         }
     }
