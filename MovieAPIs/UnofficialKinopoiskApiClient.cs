@@ -135,6 +135,7 @@ namespace MovieAPIs
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, releaseFilmsUrl);
             var responceBody = await client.GetStringAsync(urlPathWithQuery);
             var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmRelease>>(responceBody);
+            return filmsResponse;
         }
 
         public async Task<FilmSearch[]> GetSequelsAndPrequelsByIdAsync(int id)
