@@ -102,6 +102,16 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
+        public async Task<FilmsResponse<FactsAndMistakes>> GetFilmFactsAndMistakesAsync(int id)
+        {
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string factsAndMistakesPathSegment = configuration["UnofficialKinopoisk:FactsPathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), factsAndMistakesPathSegment);
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<FactsAndMistakes>>(responceBody);
+            return filmsResponse;
+        }
+
         public async Task<FilmsResponse<FilmDistributionsResponseItems>> GetFilmDistributionsAsync(int id)
         {
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
@@ -111,6 +121,7 @@ namespace MovieAPIs
             var filmsResponse = serializer.Deserialize<FilmsResponse<FilmDistributionsResponseItems>>(responceBody);
             return filmsResponse;
         }
+
 
         public async Task<FilmsResponseWithPagesCount<FilmRelease>> GetDigitalReleasesAsync(int year, Months month, int page = 1)
         {
@@ -124,6 +135,50 @@ namespace MovieAPIs
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, releaseFilmsUrl);
             var responceBody = await client.GetStringAsync(urlPathWithQuery);
             var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmRelease>>(responceBody);
+        }
+
+        public async Task<FilmSearch[]> GetSequelsAndPrequelsByIdAsync(int id)
+        {
+            string filmsUrl = configuration["UnofficialKinopoisk:V21:FilmsUrl"];
+            string sequelsAndPrequelsPathSegment = configuration["UnofficialKinopoisk:SequelsAndPrequelsPathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), sequelsAndPrequelsPathSegment);
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmSearch[]>(responceBody);
+            return filmsResponse;
+        }
+
+        public async Task<ViewerReviewsResponse> GetViewerReviewsByIdAsync(int id, int page = 1, ReviewOrder order = ReviewOrder.DATE_DESC)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["page"] = page.ToString(),
+                ["order"] = order.ToString(),
+            };
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string viewerReviewsPathSegment = configuration["UnofficialKinopoisk:ReviewsPathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, UrlHelper.GetPath(filmsUrl, id.ToString(), viewerReviewsPathSegment));
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<ViewerReviewsResponse>(responceBody);
+            return filmsResponse;
+        }
+
+        public async Task<FilmsResponse<MonetizationInfo>> GetBoxOfficeByIdAsync(int id)
+        {
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string boxOfficePathSegment = configuration["UnofficialKinopoisk:BoxOfficePathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), boxOfficePathSegment);
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<MonetizationInfo>>(responceBody);
+            return filmsResponse;
+        }
+
+        public async Task<FilmsResponse<Season>> GetSeasonsDataByIdAsync(int id)
+        {
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string seasonsPathSegment = configuration["UnofficialKinopoisk:SeasonsPathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), seasonsPathSegment);
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<Season>>(responceBody);
             return filmsResponse;
         }
     }

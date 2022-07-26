@@ -14,6 +14,7 @@
         NUM_VOTE,
         YEAR
     }
+
     public enum MovieType
     {
         FILM,
@@ -27,6 +28,7 @@
     {
         ALL = -1
     }
+
 
     public enum Months
     {
@@ -42,5 +44,15 @@
         OCTOBER, 
         NOVEMBER, 
         DECEMBER
+    }
+
+    public enum ReviewOrder
+    {
+        DATE_ASC, 
+        DATE_DESC, 
+        USER_POSITIVE_RATING_ASC, 
+        USER_POSITIVE_RATING_DESC,
+        USER_NEGATIVE_RATING_ASC, 
+        USER_NEGATIVE_RATING_DESC
     }
 }
