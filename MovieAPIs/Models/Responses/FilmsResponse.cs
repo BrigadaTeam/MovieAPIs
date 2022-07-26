@@ -14,5 +14,13 @@ namespace MovieAPIs.Models
                 Films = value;
             }
         }
+        [JsonProperty("releases")]
+        T[] Releases
+        {
+            set
+            {
+                Films = value;
+            }
+        }
     }
 }
