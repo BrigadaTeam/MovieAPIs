@@ -2,17 +2,17 @@
 
 namespace MovieAPIs.Models
 {
-    public class FilmsResponceWithPageCount<T> : FilmsResponse<T>
+    public class FilmsResponseWithPagesCount<T> : FilmsResponse<T>
     {
         [JsonProperty("pagesCount")]
-        public int PageCount { get; set; }
+        public int PagesCount { get; set; }
 
         [JsonProperty("totalPages")]
         int TotalPages
         {
             set
             {
-                PageCount = value;
+                PagesCount = value;
             }
         }
     }

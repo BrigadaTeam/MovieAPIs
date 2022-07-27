@@ -29,6 +29,23 @@
         ALL = -1
     }
 
+
+    public enum Months
+    {
+        JANUARY, 
+        FEBRUARY, 
+        MARCH, 
+        APRIL, 
+        MAY, 
+        JUNE, 
+        JULY, 
+        AUGUST, 
+        SEPTEMBER, 
+        OCTOBER, 
+        NOVEMBER, 
+        DECEMBER
+    }
+
     public enum ReviewOrder
     {
         DATE_ASC, 
@@ -37,6 +54,5 @@
         USER_POSITIVE_RATING_DESC,
         USER_NEGATIVE_RATING_ASC, 
         USER_NEGATIVE_RATING_DESC
-
     }
 }

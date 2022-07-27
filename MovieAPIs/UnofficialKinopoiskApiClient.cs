@@ -33,7 +33,8 @@ namespace MovieAPIs
             var film = serializer.Deserialize<Film>(responceBody);
             return film;
         }
-        public async Task<FilmsResponceWithPageCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1)
+
+        public async Task<FilmsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1)
         {
             var queryParams = new Dictionary<string, string>
             {
@@ -45,7 +46,7 @@ namespace MovieAPIs
             var response = await client.GetAsync(urlPathWithQuery);
             if (!response.IsSuccessStatusCode) ExceptionHandler.GetException(response.StatusCode);
             var responceBody = await response.Content.ReadAsStringAsync();
-            var filmsResponse = serializer.Deserialize<FilmsResponceWithPageCount<FilmSearch>>(responceBody);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmSearch>>(responceBody);
             return filmsResponse;
         }
 
@@ -59,7 +60,7 @@ namespace MovieAPIs
             return genresAndCountriesId;
         }
 
-        public async Task<FilmsResponceWithPageCount<Film>> GetFilmsByFiltersAsync(int countryId = (int)Filter.ALL, int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
+        public async Task<FilmsResponseWithPagesCount<Film>> GetFilmsByFiltersAsync(int countryId = (int)Filter.ALL, int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
             MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
             int yearFrom = 1000, int yearTo = 3000, int page = 1)
         {
@@ -82,7 +83,7 @@ namespace MovieAPIs
             var response = await client.GetAsync(urlPathWithQuery);
             if (!response.IsSuccessStatusCode) ExceptionHandler.GetException(response.StatusCode);
             var responceBody = await response.Content.ReadAsStringAsync();
-            var filmsResponse = serializer.Deserialize<FilmsResponceWithPageCount<Film>>(responceBody);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<Film>>(responceBody);
             return filmsResponse;
         }
         public async Task<FilmsResponse<RelatedFilm>> GetRelatedFilmsAsync(int id)
@@ -97,7 +98,7 @@ namespace MovieAPIs
             return filmsResponce;
         }
 
-        public async Task<FilmsResponceWithPageCount<FilmSearch>> GetTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS, int page = 1)
+        public async Task<FilmsResponseWithPagesCount<FilmSearch>> GetTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS, int page = 1)
         {
             var queryParams = new Dictionary<string, string>
             {
@@ -109,7 +110,7 @@ namespace MovieAPIs
             var response = await client.GetAsync(urlPathWithQuery);
             if (!response.IsSuccessStatusCode) ExceptionHandler.GetException(response.StatusCode);
             var responceBody = await response.Content.ReadAsStringAsync();
-            var filmsResponse = serializer.Deserialize<FilmsResponceWithPageCount<FilmSearch>>(responceBody);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmSearch>>(responceBody);
             return filmsResponse;
         }
 
@@ -134,6 +135,24 @@ namespace MovieAPIs
             if (!response.IsSuccessStatusCode) ExceptionHandler.GetException(response.StatusCode);
             var responceBody = await response.Content.ReadAsStringAsync();
             var filmsResponse = serializer.Deserialize<FilmsResponse<FilmDistributionsResponseItems>>(responceBody);
+            return filmsResponse;
+        }
+
+
+        public async Task<FilmsResponseWithPagesCount<FilmRelease>> GetDigitalReleasesAsync(int year, Months month, int page = 1)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["year"] = year.ToString(),
+                ["month"] = month.ToString(),
+                ["page"] = page.ToString()
+            };
+            string releaseFilmsUrl = configuration["UnofficialKinopoisk:V21:ReleasesUrl"];
+            string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, releaseFilmsUrl);
+            var response = await client.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode) ExceptionHandler.GetException(response.StatusCode);
+            var responceBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmRelease>>(responceBody);
             return filmsResponse;
         }
 
