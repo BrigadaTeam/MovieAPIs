@@ -182,5 +182,15 @@ namespace MovieAPIs
             var filmsResponse = serializer.Deserialize<FilmsResponse<Season>>(responceBody);
             return filmsResponse;
         }
+
+        public async Task<FilmsResponseWithPagesCount<Video>> GetTrailersAndTeasersByIdAsync(int id)
+        {
+            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            string trailersAndTeasersPathSegment = configuration["UnofficialKinopoisk:VideosPathSegment"];
+            string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), trailersAndTeasersPathSegment);
+            var responceBody = await client.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<Video>>(responceBody);
+            return filmsResponse;
+        }
     }
 }
