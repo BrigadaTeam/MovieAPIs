@@ -5,9 +5,9 @@ namespace MovieAPIs.Utils
 {
     public static class ExceptionHandler
     {
-        public static void GetException(int code)
+        public static void GetException(System.Net.HttpStatusCode code)
         {
-            throw code switch
+            throw (int)code switch
             {
                 401 => new HttpRequestException($"Empty or invalid token - {code}"),
                 402 => new HttpRequestException($"Request limit exceeded (either daily or total) - {code}"),
