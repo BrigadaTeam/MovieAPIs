@@ -12,7 +12,7 @@ namespace MovieAPIs.Models
         public string FilmLength { get; set; }
         public Country[] Countries { get; set; }
         public Genre[] Genres { get; set; }
-        public string Raring { get; set; }
+        public string Rating { get; set; }
         public int RatingVoteCount { get; set; }
         public string PosterUrl { get; set; }
         public string PosterUrlPreview { get; set; }
