@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 
 namespace MovieAPIs.Utils
 {
-    public static class ExceptionHandler
+    internal static class HttpInvalidCodeHandler
     {
-        public static void GetException(System.Net.HttpStatusCode code)
+        internal static void ThrowException(HttpStatusCode code)
         {
             throw (int)code switch
             {
