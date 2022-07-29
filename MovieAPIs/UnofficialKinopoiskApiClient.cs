@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MovieAPIs.Models;
 using MovieAPIs.Utils;
@@ -45,16 +43,16 @@ namespace MovieAPIs
             };
             string searchByKeywordUrl = configuration["UnofficialKinopoisk:V21:SearchByKeywordUrl"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, searchByKeywordUrl);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmSearch>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmSearch>>(responseBody);
             return filmsResponse;
         }
 
         public async Task<GenresAndCountriesResponse> GetGenresAndCountriesAsync()
         {
             string genresAndCountriesUrl = configuration["UnofficialKinopoisk:V22:FiltersUrl"];
-            var responceBody = await httpClient.GetStringAsync(genresAndCountriesUrl);
-            var genresAndCountriesId = serializer.Deserialize<GenresAndCountriesResponse>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(genresAndCountriesUrl);
+            var genresAndCountriesId = serializer.Deserialize<GenresAndCountriesResponse>(responseBody);
             return genresAndCountriesId;
         }
 
@@ -78,8 +76,8 @@ namespace MovieAPIs
             };
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, filmsUrl);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<Film>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<Film>>(responseBody);
             return filmsResponse;
         }
         public async Task<FilmsResponse<RelatedFilm>> GetRelatedFilmsAsync(int id)
@@ -87,9 +85,9 @@ namespace MovieAPIs
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string similarsPathSegment = configuration["UnofficialKinopoisk:SimilarsPathSegment"];
             string urlPath = UrlHelper.GetPath(filmsUrl, id.ToString(), similarsPathSegment);
-            var responceBody = await httpClient.GetStringAsync(urlPath);
-            var filmsResponce = serializer.Deserialize<FilmsResponse<RelatedFilm>>(responceBody);
-            return filmsResponce;
+            var responseBody = await httpClient.GetStringAsync(urlPath);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<RelatedFilm>>(responseBody);
+            return filmsResponse;
 
         }
 
@@ -102,8 +100,8 @@ namespace MovieAPIs
             };
             string topFilmsUrl = configuration["UnofficialKinopoisk:V22:TopUrl"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, topFilmsUrl);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmSearch>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmSearch>>(responseBody);
             return filmsResponse;
         }
 
@@ -112,8 +110,8 @@ namespace MovieAPIs
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string factsAndMistakesPathSegment = configuration["UnofficialKinopoisk:FactsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), factsAndMistakesPathSegment);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponse<FactsAndMistakes>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<FactsAndMistakes>>(responseBody);
             return filmsResponse;
         }
 
@@ -122,8 +120,8 @@ namespace MovieAPIs
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string distributionsPathSegment = configuration["UnofficialKinopoisk:DistributionsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), distributionsPathSegment);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponse<FilmDistributionsResponseItems>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<FilmDistributionsResponseItems>>(responseBody);
             return filmsResponse;
         }
 
@@ -138,8 +136,8 @@ namespace MovieAPIs
             };
             string releaseFilmsUrl = configuration["UnofficialKinopoisk:V21:ReleasesUrl"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, releaseFilmsUrl);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmRelease>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<FilmRelease>>(responseBody);
             return filmsResponse;
         }
 
@@ -148,8 +146,8 @@ namespace MovieAPIs
             string filmsUrl = configuration["UnofficialKinopoisk:V21:FilmsUrl"];
             string sequelsAndPrequelsPathSegment = configuration["UnofficialKinopoisk:SequelsAndPrequelsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), sequelsAndPrequelsPathSegment);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmSearch[]>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmSearch[]>(responseBody);
             return filmsResponse;
         }
 
@@ -163,8 +161,8 @@ namespace MovieAPIs
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string viewerReviewsPathSegment = configuration["UnofficialKinopoisk:ReviewsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, UrlHelper.GetPath(filmsUrl, id.ToString(), viewerReviewsPathSegment));
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<ViewerReviewsResponse>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<ViewerReviewsResponse>(responseBody);
             return filmsResponse;
         }
 
@@ -173,8 +171,8 @@ namespace MovieAPIs
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string boxOfficePathSegment = configuration["UnofficialKinopoisk:BoxOfficePathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), boxOfficePathSegment);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponse<MonetizationInfo>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<MonetizationInfo>>(responseBody);
             return filmsResponse;
         }
 
@@ -183,8 +181,8 @@ namespace MovieAPIs
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string seasonsPathSegment = configuration["UnofficialKinopoisk:SeasonsPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), seasonsPathSegment);
-            var responceBody = await httpClient.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponse<Season>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<Season>>(responseBody);
             return filmsResponse;
         }
 
@@ -193,8 +191,8 @@ namespace MovieAPIs
             string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
             string trailersAndTeasersPathSegment = configuration["UnofficialKinopoisk:VideosPathSegment"];
             string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), trailersAndTeasersPathSegment);
-            var responceBody = await client.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponse<Video>>(responceBody);
+            var responseBody = await httpClient.GetStringAsync(urlPathWithQuery);
+            var filmsResponse = serializer.Deserialize<FilmsResponse<Video>>(responseBody);
             return filmsResponse;
         }
     }
