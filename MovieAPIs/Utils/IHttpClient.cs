@@ -10,7 +10,7 @@ namespace MovieAPIs.Utils
 {
     internal interface IHttpClient
     {
-        Task<string> GetStringAsync(string requestUrl);
+        Task<HttpResponseMessage> GetAsync(string requestUrl);
     }
 
     internal class InternalHttpClient : IHttpClient
@@ -23,9 +23,9 @@ namespace MovieAPIs.Utils
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
         }
-        public Task<string> GetStringAsync(string requestUrl)
+        public Task<HttpResponseMessage> GetAsync(string requestUrl)
         {
-            return client.GetStringAsync(requestUrl);
+            return client.GetAsync(requestUrl);
         }
     }
 }
