@@ -40,7 +40,7 @@ namespace MovieAPIsTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetFilmByIdAsync(1));
-            Assert.True(ex!.Message == HttpInvalidCodeHandler.Errors[404]);
+            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.NotFound]);
         }
     }
 }
