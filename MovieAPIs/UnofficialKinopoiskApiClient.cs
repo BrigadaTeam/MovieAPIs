@@ -228,11 +228,14 @@ namespace MovieAPIs
 
         public async Task<FilmsResponse<Nomination>> GetAwardsByIdAsync(int id)
         {
-            string filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
-            string awardsPathSegment = configuration["UnofficialKinopoisk:AwardsPathSegment"];
-            string urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), awardsPathSegment);
-            var responceBody = await client.GetStringAsync(urlPathWithQuery);
-            var filmsResponse = serializer.Deserialize<FilmsResponse<Nomination>>(responceBody);
+            var filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            var awardsPathSegment = configuration["UnofficialKinopoisk:AwardsPathSegment"];
+            var urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), awardsPathSegment);
+            var response = await httpClient.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode) 
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<FilmsResponse<Nomination>>(responseBody);
             return filmsResponse;
         }
     }
