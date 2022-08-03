@@ -8,82 +8,67 @@ using System.Net.Http;
 
 namespace MovieAPIsTest
 {
-    public class GetFilmByIdAsyncTests
+    public class GetAwardsByIdAsyncTests
     {
+        
         [Test]
 
-        public async Task GetFilmByIdAsync_ExistingId_CorrectResult()
+        public async Task GetAwardsByIdAsync_ExistingId_CorrectResult()
         {
             var response = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.Accepted,
-                Content = new StringContent(@"{""kinopoiskId"":301,""nameRu"":""Матрица""}"),
+                Content = new StringContent(@"{""items"":[{""name"":""Сатурн"", ""win"":false}]}"),
             };
-            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/301";
+            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/420923/awards";
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
-            var film = await client.GetFilmByIdAsync(301);
- 
-            Assert.IsTrue(film.KinopoiskId == 301 && film.NameRu == "Матрица");
+            var awardsByIdAsync = client.GetAwardsByIdAsync(420923).Result;
+            Assert.IsTrue(awardsByIdAsync.Films[0].Win == false && awardsByIdAsync.Films[0].Name == "Сатурн");
         }
-        
+
         [Test]
         
-        public async Task GetFilmByIdAsync_NonExistingId_Exception()
-        {
-            var response = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.NotFound,
-            };
-            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/1";
-            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
-            var client = new UnofficialKinopoiskApiClient(httpClient);
-            var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetFilmByIdAsync(1));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.NotFound]);
-        }
-        
-        [Test]
-        
-        public async Task GetFilmByIdAsync_LongId_Exception()
+        public async Task GetAwardsByIdAsync_LongId_Exception()
         {
             var response = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.BadRequest,
             };
-            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/999999999";
+            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/999999999/awards";
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
-            var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetFilmByIdAsync(999999999));
+            var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetAwardsByIdAsync(999999999));
             Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest]);
         }
         
         [Test]
         
-        public async Task GetFilmByIdAsync_EmptyOrWrongToken_Exception()
+        public async Task GetAwardsByIdAsync_EmptyOrWrongToken_Exception()
         {
             var response = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.Unauthorized,
             };
-            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/999";
+            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/999/awards";
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
-            var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetFilmByIdAsync(999));
+            var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetAwardsByIdAsync(999));
             Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.Unauthorized]);
         }
         
         [Test]
         
-        public async Task GetFilmByIdAsync_NegativeId_Exception()
+        public async Task GetAwardsByIdAsync_NegativeId_Exception()
         {
             var response = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.NotFound,
             };
-            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/-1";
+            var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/-1/awards";
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
-            var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetFilmByIdAsync(-1));
+            var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetAwardsByIdAsync(-1));
             Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.NotFound]);
         }
     }
