@@ -229,8 +229,8 @@ namespace MovieAPIs
         public async Task<FilmsResponse<Video>> GetTrailersAndTeasersByIdAsync(int id)
         {
             var filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
-            var seasonsPathSegment = configuration["UnofficialKinopoisk:SeasonsPathSegment"];
-            var urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), seasonsPathSegment);
+            var videoPathSegment = configuration["UnofficialKinopoisk:VideosPathSegment"];
+            var urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), videoPathSegment);
             var response = await httpClient.GetAsync(urlPathWithQuery);
             if (!response.IsSuccessStatusCode) 
                 HttpInvalidCodeHandler.ThrowException(response.StatusCode);
