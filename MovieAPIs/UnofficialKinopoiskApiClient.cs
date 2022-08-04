@@ -225,5 +225,23 @@ namespace MovieAPIs
             var filmsResponse = serializer.Deserialize<FilmsResponse<Season>>(responseBody);
             return filmsResponse;
         }
+        
+        public async Task<FilmsResponseWithPagesCount<ImageResponse>> GetImagesByIdAsync(int id, ImageType type = ImageType.STILL, int page = 1)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["page"] = page.ToString(),
+                ["type"] = type.ToString(),
+            };
+            var filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            var imagePathSegment = configuration["UnofficialKinopoisk:ImagesPathSegment"];
+            var urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, UrlHelper.GetPath(filmsUrl, id.ToString(), imagePathSegment));
+            var response = await httpClient.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode) 
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<ImageResponse>>(responseBody);
+            return filmsResponse;
+        }
     }
 }
