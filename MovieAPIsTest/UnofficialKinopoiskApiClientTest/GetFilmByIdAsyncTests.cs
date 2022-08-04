@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using MovieAPIs.Utils;
+﻿using MovieAPIs.Utils;
 using NUnit.Framework;
 using System.Threading.Tasks;
 using MovieAPIs;
