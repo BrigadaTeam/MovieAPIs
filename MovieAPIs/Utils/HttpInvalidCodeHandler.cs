@@ -12,7 +12,7 @@ namespace MovieAPIs.Utils
             {HttpStatusCode.PaymentRequired, new HttpRequestException("Request limit exceeded (either daily or total)")},
             {HttpStatusCode.NotFound, new HttpRequestException("Data not found")},
             {HttpStatusCode.TooManyRequests, new HttpRequestException("Too many requests. General limit - 20 requests per second")},
-            {HttpStatusCode.BadRequest, new HttpRequestException("Invalid id entered")}
+            {HttpStatusCode.BadRequest, new HttpRequestException("Request entered incorrectly")}
         };
         internal static void ThrowException(HttpStatusCode code)
         {
