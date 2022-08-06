@@ -55,4 +55,17 @@
         USER_NEGATIVE_RATING_ASC, 
         USER_NEGATIVE_RATING_DESC
     }
+
+    public enum ImageType
+    {
+        STILL, 
+        SHOOTING, 
+        POSTER, 
+        FAN_ART, 
+        PROMO, 
+        CONCEPT, 
+        WALLPAPER, 
+        COVER, 
+        SCREENSHOT
+    }
 }
