@@ -225,7 +225,7 @@ namespace MovieAPIs
             var filmsResponse = serializer.Deserialize<FilmsResponse<Season>>(responseBody);
             return filmsResponse;
         }
-        
+
         public async Task<StaffResponse[]> GetStaffByFilmIdAsync(int filmId)
         {
             var queryParams = new Dictionary<string, string>
@@ -239,6 +239,49 @@ namespace MovieAPIs
                 HttpInvalidCodeHandler.ThrowException(response.StatusCode);
             var responseBody = await response.Content.ReadAsStringAsync();
             var filmsResponse = serializer.Deserialize<StaffResponse[]>(responseBody);
+            return filmsResponse;
+        }
+
+        public async Task<FilmsResponse<FilmPremiere>> GetPremieresListAsync(int year, Months month)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["year"] = year.ToString(),
+                ["month"] = month.ToString(),
+            };
+            var premiereUrl = configuration["UnofficialKinopoisk:V22:PremieresUrl"];
+            var urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, premiereUrl);
+            var response = await httpClient.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode)
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<FilmsResponse<FilmPremiere>>(responseBody);
+            return filmsResponse;
+        }
+        
+        public async Task<FilmsResponse<Video>> GetTrailersAndTeasersByIdAsync(int id)
+        {
+            var filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            var videoPathSegment = configuration["UnofficialKinopoisk:VideosPathSegment"];
+            var urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), videoPathSegment);
+            var response = await httpClient.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode) 
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<FilmsResponse<Video>>(responseBody);
+            return filmsResponse;
+        }
+        
+        public async Task<FilmsResponse<Nomination>> GetAwardsByIdAsync(int id)
+        {
+            var filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            var awardsPathSegment = configuration["UnofficialKinopoisk:AwardsPathSegment"];
+            var urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), awardsPathSegment);
+            var response = await httpClient.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode) 
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<FilmsResponse<Nomination>>(responseBody);
             return filmsResponse;
         }
     }
