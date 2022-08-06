@@ -226,6 +226,18 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
+        public async Task<FilmsResponse<Video>> GetTrailersAndTeasersByIdAsync(int id)
+        {
+            var filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
+            var videoPathSegment = configuration["UnofficialKinopoisk:VideosPathSegment"];
+            var urlPathWithQuery = UrlHelper.GetPath(filmsUrl, id.ToString(), videoPathSegment);
+            var response = await httpClient.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode) 
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<FilmsResponse<Video>>(responseBody);
+            return filmsResponse;
+        }
         public async Task<FilmsResponse<Nomination>> GetAwardsByIdAsync(int id)
         {
             var filmsUrl = configuration["UnofficialKinopoisk:V22:FilmsUrl"];
