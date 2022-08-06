@@ -226,6 +226,22 @@ namespace MovieAPIs
             return filmsResponse;
         }
 
+        public async Task<StaffResponse[]> GetStaffByFilmIdAsync(int filmId)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["filmId"] = filmId.ToString(),
+            };
+            var staffUrl = configuration["UnofficialKinopoisk:V1:StaffUrl"];
+            var urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, staffUrl);
+            var response = await httpClient.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode) 
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<StaffResponse[]>(responseBody);
+            return filmsResponse;
+        }
+
         public async Task<FilmsResponse<FilmPremiere>> GetPremieresListAsync(int year, Months month)
         {
             var queryParams = new Dictionary<string, string>
