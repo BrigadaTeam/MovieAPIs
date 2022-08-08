@@ -304,5 +304,22 @@ namespace MovieAPIs
             var filmsResponse = serializer.Deserialize<FilmsResponse<Nomination>>(responseBody);
             return filmsResponse;
         }
+        
+        public async Task<FilmsResponse<FilmPersonInfo>> GetPersonByNameAsync(string name, int page = 1)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+                ["page"] = page.ToString()
+            };
+            var personUrl = configuration["UnofficialKinopoisk:V1:PersonsUrl"];
+            var urlPathWithQuery = UrlHelper.GetPathWithQuery(queryParams, personUrl);
+            var response = await httpClient.GetAsync(urlPathWithQuery);
+            if (!response.IsSuccessStatusCode) 
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var filmsResponse = serializer.Deserialize<FilmsResponse<FilmPersonInfo>>(responseBody);
+            return filmsResponse;
+        }
     }
 }
