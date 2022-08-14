@@ -57,7 +57,8 @@ namespace MovieAPIs
             int pagesCount = firstFilmsResponse.PagesCount;
             var queryParams = new Dictionary<string, string>
             {
-                ["type"] = topType.ToString()            };
+                ["type"] = topType.ToString()            
+            };
             var topFilmsUrl = configuration["UnofficialKinopoisk:V22:TopUrl"];
             var filmsResponses = manyRequestsHelper.GetDataFromAllPages<FilmSearch>(queryParams, pagesCount, 5, topFilmsUrl);
             await foreach (var filmsResponse in filmsResponses)
