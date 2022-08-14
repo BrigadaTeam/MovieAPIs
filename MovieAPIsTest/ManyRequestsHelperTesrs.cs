@@ -36,7 +36,8 @@ namespace MovieAPIsTest
                 IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>()) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(100)));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
-                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, 5, "testUrl");
+                int requestCountInSecond = 5;
+                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, requestCountInSecond, "testUrl");
                 int count = 0;
                 await foreach(var dataFromPage in dataFromAllPages)
                 {
@@ -45,6 +46,7 @@ namespace MovieAPIsTest
                 }
                 Assert.AreEqual(expectedCount, count);
             });
+            Assert.That(time, Is.GreaterThan(TimeSpan.FromSeconds(3))); // expectedCount(13) / requestCountInSecond(5) = min operating time(3)
             Assert.That(time, Is.LessThan(TimeSpan.FromSeconds(3.2)));
         }
 
@@ -56,7 +58,8 @@ namespace MovieAPIsTest
                 IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>()) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200)));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
-                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, 5, "testUrl");
+                int requestCountInSecond = 5;
+                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, requestCountInSecond, "testUrl");
                 int count = 0;
                 await foreach (var dataFromPage in dataFromAllPages)
                 {
@@ -65,7 +68,7 @@ namespace MovieAPIsTest
                 }
                 Assert.AreEqual(expectedCount, count);
             });
-            Assert.That(time, Is.GreaterThan(TimeSpan.FromSeconds(3.2)));
+            Assert.That(time, Is.GreaterThan(TimeSpan.FromSeconds(3))); // expectedCount(13) / requestCountInSecond(5) = min operating time(3)
             Assert.That(time, Is.LessThan(TimeSpan.FromSeconds(3.4)));
         }
 
