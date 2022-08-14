@@ -11,19 +11,16 @@ namespace MovieAPIs
         readonly IHttpClient httpClient;
         readonly IConfiguration configuration;
         readonly ISerializer serializer;
+        readonly IManyRequestsHelper manyRequestsHelper;
 
-        public UnofficialKinopoiskApiClient(string apiKey)
-        {
-            httpClient = new InternalHttpClient(apiKey);
-            serializer = new NewtonsoftJsonSerializer();
-            configuration = new JsonConfiguration(Path.Combine("Configuration", "configuration.json"));
-        }
+        public UnofficialKinopoiskApiClient(string apiKey) : this(new InternalHttpClient(apiKey)) { }
 
         internal UnofficialKinopoiskApiClient(IHttpClient httpClient)
         {
             configuration = new JsonConfiguration(Path.Combine("Configuration", "configuration.json"));
             serializer = new NewtonsoftJsonSerializer();
             this.httpClient = httpClient;
+            manyRequestsHelper = new ManyRequestsHelper(httpClient, serializer);
         }
 
         public async Task<Film> GetFilmByIdAsync(int id)
@@ -38,7 +35,36 @@ namespace MovieAPIs
             var film = serializer.Deserialize<Film>(responseBody);
             return film;
         }
+        public async IAsyncEnumerable<FilmSearch> GetFilmsByKeywordFromAllPagesAsync(string keyword)
+        {
+            var firstFilmsResponse = await GetFilmsByKeywordAsync(keyword);
+            int pagesCount = firstFilmsResponse.PagesCount;
+            var queryParams = new Dictionary<string, string>
+            {
+                ["keyword"] = keyword
+            };
+            var searchByKeywordUrl = configuration["UnofficialKinopoisk:V21:SearchByKeywordUrl"];
+            var filmsResponses = manyRequestsHelper.GetDataFromAllPages<FilmSearch>(queryParams, pagesCount, 5, searchByKeywordUrl);
+            await foreach(var filmsResponse in filmsResponses)
+            {
+                yield return filmsResponse;
+            }
+        }
 
+        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromAllPagesAsync(Tops topType = Tops.TOP_250_BEST_FILMS)
+        {
+            var firstFilmsResponse = await GetTopFilmsAsync(topType);
+            int pagesCount = firstFilmsResponse.PagesCount;
+            var queryParams = new Dictionary<string, string>
+            {
+                ["type"] = topType.ToString()            };
+            var topFilmsUrl = configuration["UnofficialKinopoisk:V22:TopUrl"];
+            var filmsResponses = manyRequestsHelper.GetDataFromAllPages<FilmSearch>(queryParams, pagesCount, 5, topFilmsUrl);
+            await foreach (var filmsResponse in filmsResponses)
+            {
+                yield return filmsResponse;
+            }
+        }
         public async Task<FilmsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1)
         {
             var queryParams = new Dictionary<string, string>
