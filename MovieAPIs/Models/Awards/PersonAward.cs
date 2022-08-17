@@ -1,6 +1,6 @@
 ﻿namespace MovieAPIs.Models 
 { 
-    public class Person
+    public class PersonAward
     {
         public int? KinopoiskId { get; set; }
         public string WebUrl { get; set; }
