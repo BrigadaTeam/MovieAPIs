@@ -7,6 +7,6 @@
         public string ImageUrl { get; set; }
         public string NominationName { get; set; }
         public int Year { get; set; }
-        public Person[] Persons { get; set; }
+        public PersonAward[] Persons { get; set; }
     }
 }
