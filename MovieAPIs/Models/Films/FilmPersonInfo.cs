@@ -1,7 +1,10 @@
-﻿namespace MovieAPIs.Models
+using Newtonsoft.Json;
+
+namespace MovieAPIs.Models
 {
     public class FilmPersonInfo
     {
+        [JsonProperty("kinopoiskId")]
         public int FilmId { get; set; }
         public string NameRu { get; set; }
         public string NameEn { get; set; }
