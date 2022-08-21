@@ -6,17 +6,22 @@ namespace MovieAPIsTest
 {
     public class UrlHelperTests
     {
-        [TestCase(null, "")]
-        [TestCase(new string[] { "path segment" }, "path segment")]
-        [TestCase(new string[] { "" }, "")]
-        [TestCase(new string[] { "home", "room", "bed" }, "home/room/bed")]
-        public void GetPathTest(string[] pathSegments, string expectedPath)
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("some string")]
+        public void GetUrlWithoutQueryTest(string path)
         {
-            string path = UrlHelper.GetPath(pathSegments);
+            string url = UrlHelper.GetUrl(path);
 
-            Assert.AreEqual(expectedPath, path);
+            Assert.AreEqual(path, url);
+        }
+        [TestCaseSource()]
+        public void GetQueryTest()
+        {
+
         }
 
+        static IEnumerable<TestCaseData> TestSource
         [Test]
         public void GetQueryWithNullQueryTest()
         {
@@ -55,13 +60,13 @@ namespace MovieAPIsTest
             Assert.AreEqual(expectedQuery, query);
         }
 
-        [Test]
+    /*    [Test]
         public void GetPathWithoutQueryTest()
         {
             var pathSegments = new string[] { "home", "room", "bed" };
             string expectedPath = "home/room/bed";
 
-            string pathWithoutQuery = UrlHelper.GetPathWithQuery(null, pathSegments);
+            string pathWithoutQuery = UrlHelper.GetUrl(null, pathSegments);
 
             Assert.AreEqual(expectedPath, pathWithoutQuery);
         }
@@ -75,15 +80,16 @@ namespace MovieAPIsTest
             };
             string expectedQuery = "one=oneValue";
 
-            string queryWithoutPath = UrlHelper.GetPathWithQuery(queryParams);
+            string queryWithoutPath = UrlHelper.GetUrl(queryParams);
 
             Assert.AreEqual(expectedQuery, queryWithoutPath);
-        }
+        }*/
 
         [Test]
         public void WithoutPathAndQueryTest()
         {
-            string emptyString = UrlHelper.GetPathWithQuery(null);
+            string path = string.Empty;
+            string emptyString = UrlHelper.GetUrl(path);
 
             Assert.IsEmpty(emptyString);
         }
@@ -91,17 +97,19 @@ namespace MovieAPIsTest
         [Test]
         public void GetPathWithQueryTest()
         {
-            var pathSegments = new string[] { "home", "room", "bed" };
+            string path = "home/room/bed";
             var queryParams = new Dictionary<string, string>
             {
                 ["one"] = "oneValue",
                 ["two"] = "twoValue"
             };
-            string expectedPathWithQuery = "home/room/bed?one=oneValue&two=twoValue";
+            string expectedUrl = "home/room/bed?one=oneValue&two=twoValue";
 
-            string pathWithQuery = UrlHelper.GetPathWithQuery(queryParams, pathSegments);
+            string actualUrl = UrlHelper.GetUrl(path, queryParams);
 
-            Assert.AreEqual(expectedPathWithQuery, pathWithQuery);
+            Assert.AreEqual(expectedUrl, actualUrl);
         }
     }
+
+    internal class TestCase
 }
