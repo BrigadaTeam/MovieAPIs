@@ -13,7 +13,7 @@ using MovieAPIs.Models;
 
 namespace MovieAPIsTest
 {
-    public class ManyRequestsHelperTesrs
+    public class ManyRequestsHelperTests
     {
         ISerializer serializer;
         Dictionary<string, string> queryParams;
