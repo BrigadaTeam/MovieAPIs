@@ -109,6 +109,22 @@ namespace MovieAPIsTest
 
             Assert.AreEqual(expectedUrl, actualUrl);
         }
+
+        [Test]
+        public void GetUrlsTest()
+        {
+            var pathSegments = new string[] { "home", "room", "bed" };
+            var queryParams = new Dictionary<string, string>
+            {
+                ["one"] = "oneValue",
+                ["two"] = "twoValue"
+            };
+            var expectedUrls = new string[] { "home/room/bed?one=oneValue&two=twoValue&page=1", "home/room/bed?one=oneValue&two=twoValue&page=2" };
+
+            var actualUrls = UrlHelper.GetUrls(queryParams, 2, pathSegments);
+
+            CollectionAssert.AreEqual(expectedUrls, actualUrls);
+        }
     }
 
     internal class TestCase
