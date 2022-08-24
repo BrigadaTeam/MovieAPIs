@@ -10,7 +10,7 @@ namespace MovieAPIs.Utils
 {
     internal interface IManyRequestsHelper
     {
-        internal IAsyncEnumerable<T> GetDataFromAllPages<T>(Dictionary<string, string> queryParams, int pagesCount, int requestCountInSecond, string path);
+        public IAsyncEnumerable<T> GetDataFromAllPages<T>(Dictionary<string, string> queryParams, int pagesCount, int requestCountInSecond, string path);
     }
     internal class ManyRequestsHelper : IManyRequestsHelper
     {
