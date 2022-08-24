@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MovieAPIs.Utils
 {
-    internal interface IHttpClient
+    public interface IHttpClient
     {
         Task<HttpResponseMessage> GetAsync(string requestUrl);
     }

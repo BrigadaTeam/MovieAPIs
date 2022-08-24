@@ -1,20 +1,16 @@
 {
-  "UnofficialKinopoisk": {
-    "V22": {
-      "FilmsUrl": "https://kinopoiskapiunofficial.tech/api/v2.2/films",
-      "FiltersUrl": "https://kinopoiskapiunofficial.tech/api/v2.2/films/filters",
-      "PremieresUrl": "https://kinopoiskapiunofficial.tech/api/v2.2/films/premieres",
-      "TopUrl": "https://kinopoiskapiunofficial.tech/api/v2.2/films/top"
-    },
-    "V21": {
-      "SearchByKeywordUrl": "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword",
-      "FilmsUrl": "https://kinopoiskapiunofficial.tech/api/v2.1/films",
-      "ReleasesUrl": "https://kinopoiskapiunofficial.tech/api/v2.1/films/releases"
-    },
-    "V1": {
-      "StaffUrl": "https://kinopoiskapiunofficial.tech/api/v1/staff",
-      "PersonsUrl": "https://kinopoiskapiunofficial.tech/api/v1/persons"
-    },
+    "FilmsUrlV22": "https://kinopoiskapiunofficial.tech/api/v2.2/films",
+    "FiltersUrlV22": "https://kinopoiskapiunofficial.tech/api/v2.2/films/filters",
+    "PremieresUrlV22": "https://kinopoiskapiunofficial.tech/api/v2.2/films/premieres",
+    "TopUrlV22": "https://kinopoiskapiunofficial.tech/api/v2.2/films/top",
+
+    "SearchByKeywordUrlV21": "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword",
+    "FilmsUrlV21": "https://kinopoiskapiunofficial.tech/api/v2.1/films",
+    "ReleasesUrlV21": "https://kinopoiskapiunofficial.tech/api/v2.1/films/releases",
+
+    "StaffUrlV1": "https://kinopoiskapiunofficial.tech/api/v1/staff",
+    "PersonsUrlV1": "https://kinopoiskapiunofficial.tech/api/v1/persons",
+
     "SeasonsPathSegment": "seasons",
     "FactsPathSegment": "facts",
     "DistributionsPathSegment": "distributions",
@@ -25,5 +21,4 @@
     "ImagesPathSegment": "images",
     "ReviewsPathSegment": "reviews",
     "SequelsAndPrequelsPathSegment": "sequels_and_prequels"
-  }
 }

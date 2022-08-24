@@ -1,30 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System;
 
 namespace MovieAPIs.Utils
 {
     static internal class UrlHelper
     {
-        internal static string GetPath(params string[] pathSegments)
+        internal static string GetUrl(string path, Dictionary<string, string>? queryParams = null)
         {
-            if (pathSegments == null || pathSegments.Length == 0)
-                return string.Empty;
-            var path = new StringBuilder();
-            for(int i = 0; i < pathSegments.Length; i++)
-            {
-                path.Append($"{pathSegments[i]}/");
-            }
-            return path.ToString().TrimEnd('/');
-        }
-        internal static string GetPathWithQuery(Dictionary<string, string> queryParams, params string[] pathSegments)
-        {
-            string path = GetPath(pathSegments);
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Path must not be empty or null", nameof(path));
             string query = GetQuery(queryParams);
-            if(path == string.Empty || query == string.Empty)
-            {
-                return path == string.Empty ? query : path;
-            }
+            if (string.IsNullOrEmpty(query))
+                return path;
             return $"{path}?{query}";
         }
         internal static string GetQuery(Dictionary<string, string> queryParams)
@@ -40,16 +29,15 @@ namespace MovieAPIs.Utils
             return query.ToString().TrimEnd('&');
         }
 
-        internal static string[] GetUrls(Dictionary<string, string> queryParams, int pageCount, params string[] pathSegments)
+        internal static string[] GetUrls(Dictionary<string, string> queryParams, int pageCount, string path)
         {
-            string path = GetPath(pathSegments);
             var urls = new LinkedList<string>();
 
             for(int page = 1; page <= pageCount; page++)
             {
                 queryParams["page"] = page.ToString();
-                string query = GetQuery(queryParams);
-                urls.AddLast($"{path}?{query}");
+                string url = GetUrl(path, queryParams);
+                urls.AddLast(url);
             }
 
             queryParams.Remove("page");
