@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using MovieAPIs.Configuration;
 using MovieAPIs.Models;
@@ -10,23 +8,18 @@ namespace MovieAPIs
 {
     public class UnofficialKinopoiskApiClient : MovieApiClientBase
     {
-        readonly IHttpClient httpClient;
-        readonly ISerializer serializer;
         readonly UnofficialKinopoiskConstants constants;
-        readonly IManyRequestsHelper manyRequestsHelper;
 
-        public UnofficialKinopoiskApiClient(string apiKey) : this(new InternalHttpClient(apiKey)) { }
 
-        internal UnofficialKinopoiskApiClient(IHttpClient httpClient)
+        public UnofficialKinopoiskApiClient(string apiKey) : this(new InternalHttpClient(apiKey), new NewtonsoftJsonSerializer()) { }
+
+        public UnofficialKinopoiskApiClient(string apiKey, ISerializer serializer) : this(new InternalHttpClient(apiKey), serializer) { }
+
+        public UnofficialKinopoiskApiClient(IHttpClient httpClient) : this(httpClient, new NewtonsoftJsonSerializer()) { }
+
+        public UnofficialKinopoiskApiClient(IHttpClient httpClient, ISerializer serializer) : base(httpClient, serializer)
         {
-            serializer = new NewtonsoftJsonSerializer();
-            this.httpClient = httpClient;
-            using (var reader = new StreamReader(Path.Combine("Configuration", "configuration.json")))
-            {
-                string json = reader.ReadToEnd();
-                constants = serializer.Deserialize<UnofficialKinopoiskConstants>(json);
-            }
-            manyRequestsHelper = new ManyRequestsHelper(httpClient, serializer);
+            constants = UnofficialKinopoiskConstants.GetUnofficialKinopoiskConstants(new NewtonsoftJsonSerializer());
         }
 
         public async Task<Film> GetFilmByIdAsync(int id)
@@ -41,7 +34,7 @@ namespace MovieAPIs
             int pagesCount = firstFilmsResponse.PagesCount;
             var queryParams = new Dictionary<string, string>
             {
-                ["type"] = topType.ToString()            
+                ["type"] = topType.ToString()
             };
             string path = $"{constants.TopUrlV22}";
             var filmsResponses = manyRequestsHelper.GetDataFromAllPages<FilmSearch>(queryParams, pagesCount, 5, path);
@@ -223,27 +216,6 @@ namespace MovieAPIs
         {
             string path = $"{constants.StaffUrlV1}/{personId}";
             return await GetResponseDataAsync<PersonResponse>(path);
-        }
-
-        protected override string GetUrl(string path, Dictionary<string, string>? queryParams)
-        {
-            return UrlHelper.GetUrl(path, queryParams!);
-        }
-
-        protected override async Task<HttpResponseMessage> GetResponse(string url)
-        {
-            return await httpClient.GetAsync(url);
-        }
-
-        protected override void ValidateResponse(HttpResponseMessage response)
-        {
-            if(!response.IsSuccessStatusCode)
-               HttpInvalidCodeHandler.ThrowException(response.StatusCode);
-        }
-
-        protected override async Task<T> Deserialize<T>(string json)
-        {
-            return serializer.Deserialize<T>(json);
         }
     }
 }
