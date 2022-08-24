@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System;
 
 namespace MovieAPIs.Utils
 {
@@ -8,6 +9,8 @@ namespace MovieAPIs.Utils
     {
         internal static string GetUrl(string path, Dictionary<string, string>? queryParams = null)
         {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Path must not be empty or null", nameof(path));
             string query = GetQuery(queryParams);
             if (string.IsNullOrEmpty(query))
                 return path;
@@ -26,16 +29,15 @@ namespace MovieAPIs.Utils
             return query.ToString().TrimEnd('&');
         }
 
-        internal static string[] GetUrls(Dictionary<string, string> queryParams, int pageCount, params string[] pathSegments)
+        internal static string[] GetUrls(Dictionary<string, string> queryParams, int pageCount, string path)
         {
-            string path = GetPath(pathSegments);
             var urls = new LinkedList<string>();
 
             for(int page = 1; page <= pageCount; page++)
             {
                 queryParams["page"] = page.ToString();
-                string query = GetQuery(queryParams);
-                urls.AddLast($"{path}?{query}");
+                string url = GetUrl(path, queryParams);
+                urls.AddLast(url);
             }
 
             queryParams.Remove("page");

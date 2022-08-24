@@ -10,7 +10,7 @@ namespace MovieAPIs.Utils
 {
     internal interface IManyRequestsHelper
     {
-        internal IAsyncEnumerable<T> GetDataFromAllPages<T>(Dictionary<string, string> queryParams, int pagesCount, int requestCountInSecond, params string[] pathSegments);
+        internal IAsyncEnumerable<T> GetDataFromAllPages<T>(Dictionary<string, string> queryParams, int pagesCount, int requestCountInSecond, string path);
     }
     internal class ManyRequestsHelper : IManyRequestsHelper
     {
@@ -21,9 +21,9 @@ namespace MovieAPIs.Utils
             this.httpClient = httpClient;
             this.serializer = serializer;
         }
-        public async IAsyncEnumerable<T> GetDataFromAllPages<T>(Dictionary<string, string> queryParams, int pagesCount, int requestCountInSecond, params string[] pathSegments)
+        public async IAsyncEnumerable<T> GetDataFromAllPages<T>(Dictionary<string, string> queryParams, int pagesCount, int requestCountInSecond, string path)
         {
-            var urls = UrlHelper.GetUrls(queryParams, pagesCount, pathSegments);
+            var urls = UrlHelper.GetUrls(queryParams, pagesCount, path);
             var responses = GetResponsesAsync(urls, requestCountInSecond);
             await foreach(var response in responses)
             {

@@ -21,6 +21,7 @@
         public string ImagesPathSegment { get; set; }
         public string ReviewsPathSegment { get; set; }
         public string SequelsAndPrequelsPathSegment { get; set; }
+        public int RequestCountInSecond { get; set; }
 
     }
 }

@@ -26,7 +26,6 @@ namespace MovieAPIs
                 string json = reader.ReadToEnd();
                 constants = serializer.Deserialize<UnofficialKinopoiskConstants>(json);
             }
-        }
             manyRequestsHelper = new ManyRequestsHelper(httpClient, serializer);
         }
 
@@ -44,8 +43,8 @@ namespace MovieAPIs
             {
                 ["type"] = topType.ToString()            
             };
-            var topFilmsUrl = configuration["UnofficialKinopoisk:V22:TopUrl"];
-            var filmsResponses = manyRequestsHelper.GetDataFromAllPages<FilmSearch>(queryParams, pagesCount, 5, topFilmsUrl);
+            string path = $"{constants.TopUrlV22}";
+            var filmsResponses = manyRequestsHelper.GetDataFromAllPages<FilmSearch>(queryParams, pagesCount, 5, path);
             await foreach (var filmsResponse in filmsResponses)
             {
                 yield return filmsResponse;

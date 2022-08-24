@@ -1,101 +1,82 @@
 using NUnit.Framework;
 using MovieAPIs.Utils;
 using System.Collections.Generic;
+using System;
 
 namespace MovieAPIsTest
 {
     public class UrlHelperTests
     {
-        [TestCase(null)]
-        [TestCase("")]
+        [TestCase("firstLevel/secondLevel")]
         [TestCase("some string")]
+        [TestCase("word")]
         public void GetUrlWithoutQueryTest(string path)
         {
             string url = UrlHelper.GetUrl(path);
 
             Assert.AreEqual(path, url);
         }
-        [TestCaseSource()]
-        public void GetQueryTest()
-        {
 
+        [TestCase(null)]
+        [TestCase("")]
+        public void GetUrlInvalidPath(string path)
+        {
+            Assert.Throws<ArgumentException>(() => UrlHelper.GetUrl(path));
         }
 
-        static IEnumerable<TestCaseData> TestSource
-        [Test]
-        public void GetQueryWithNullQueryTest()
+        [TestCaseSource(nameof(GetQueryTestSource))]
+        public void GetQueryTest(Dictionary<string, string> queryParams, string expectedQuery)
         {
-            string query = UrlHelper.GetQuery(null);
+            string actualQuery = UrlHelper.GetQuery(queryParams);
 
-            Assert.IsEmpty(query);
+            Assert.AreEqual(expectedQuery, actualQuery);
         }
 
-        [Test]
-        public void GetQueryWithQueryParamsTest()
+        [TestCaseSource(nameof(GetUrlWithQueryTestSource))]
+        public void GetUrlWithQueryTest(Dictionary<string, string> queryParams, string path, string expectedUrl)
         {
-            var queryParams = new Dictionary<string, string>
+            string actualUrl = UrlHelper.GetUrl(path, queryParams);
+
+            Assert.AreEqual(expectedUrl, actualUrl);
+        }
+
+        static object[] GetQueryTestSource =
+        {
+            new object[] { new Dictionary<string, string>
             {
-                ["type"] = "typeValue",
-                ["page"] = "pageValue",
-                ["count"] = "countRate"
-            };
-            string expectedQuery = "type=typeValue&page=pageValue&count=countRate";
+                ["firstKey"] = "firstValue",
+                ["secondKey"] = "secondValue",
+                ["thirdKey"] = "thirdValue"
+            }, "firstKey=firstValue&secondKey=secondValue&thirdKey=thirdValue" },
 
-            string query = UrlHelper.GetQuery(queryParams);
-
-            Assert.AreEqual(expectedQuery, query);
-        }
-
-        [Test]
-        public void GetQueryWithOneQueryParamTest()
-        {
-            var queryParams = new Dictionary<string, string>
+            new object[] { new Dictionary<string, string>
             {
-                ["one"] = "oneValue"
-            };
-            string expectedQuery = "one=oneValue";
+                ["oneKey"] = "oneValue"
+            }, "oneKey=oneValue"},
 
-            string query = UrlHelper.GetQuery(queryParams);
+            new object[] { new Dictionary<string, string>(), string.Empty },
 
-            Assert.AreEqual(expectedQuery, query);
-        }
+            new object[] { null, string.Empty }
+        };
 
-    /*    [Test]
-        public void GetPathWithoutQueryTest()
+        static object[] GetUrlWithQueryTestSource =
         {
-            var pathSegments = new string[] { "home", "room", "bed" };
-            string expectedPath = "home/room/bed";
-
-            string pathWithoutQuery = UrlHelper.GetUrl(null, pathSegments);
-
-            Assert.AreEqual(expectedPath, pathWithoutQuery);
-        }
-
-        [Test]
-        public void GetQueryWithoutPathTest()
-        {
-            var queryParams = new Dictionary<string, string>
+            new object[] { new Dictionary<string, string>
             {
-                ["one"] = "oneValue"
-            };
-            string expectedQuery = "one=oneValue";
+                ["someKey"] = "someValue",
+                ["testKey"] = "testValue"
+            }, "home/room/chair", "home/room/chair?someKey=someValue&testKey=testValue" },
+            new object[] {new Dictionary<string, string>
+            {
+                ["oneKey"] = "oneValue"
+            }, "school/classroom", "school/classroom?oneKey=oneValue" },
+            new object[]{ new Dictionary<string, string>(), "home/room", "home/room"},
+            new object[] { null, "home/room", "home/room"}
+        };
 
-            string queryWithoutPath = UrlHelper.GetUrl(queryParams);
-
-            Assert.AreEqual(expectedQuery, queryWithoutPath);
-        }*/
-
-        [Test]
-        public void WithoutPathAndQueryTest()
-        {
-            string path = string.Empty;
-            string emptyString = UrlHelper.GetUrl(path);
-
-            Assert.IsEmpty(emptyString);
-        }
 
         [Test]
-        public void GetPathWithQueryTest()
+        public void GetUrlsTest()
         {
             string path = "home/room/bed";
             var queryParams = new Dictionary<string, string>
@@ -103,29 +84,12 @@ namespace MovieAPIsTest
                 ["one"] = "oneValue",
                 ["two"] = "twoValue"
             };
-            string expectedUrl = "home/room/bed?one=oneValue&two=twoValue";
-
-            string actualUrl = UrlHelper.GetUrl(path, queryParams);
-
-            Assert.AreEqual(expectedUrl, actualUrl);
-        }
-
-        [Test]
-        public void GetUrlsTest()
-        {
-            var pathSegments = new string[] { "home", "room", "bed" };
-            var queryParams = new Dictionary<string, string>
-            {
-                ["one"] = "oneValue",
-                ["two"] = "twoValue"
-            };
             var expectedUrls = new string[] { "home/room/bed?one=oneValue&two=twoValue&page=1", "home/room/bed?one=oneValue&two=twoValue&page=2" };
 
-            var actualUrls = UrlHelper.GetUrls(queryParams, 2, pathSegments);
+            var actualUrls = UrlHelper.GetUrls(queryParams, expectedUrls.Length, path);
 
             CollectionAssert.AreEqual(expectedUrls, actualUrls);
+            Assert.IsFalse(queryParams.ContainsKey("page"));
         }
     }
-
-    internal class TestCase
 }
