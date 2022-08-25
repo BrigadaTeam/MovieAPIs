@@ -1,4 +1,5 @@
-﻿using MovieAPIs.Models;
+﻿using MovieAPIs.Configuration;
+using MovieAPIs.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace MovieAPIs.Utils
 {
     internal interface IManyRequestsHelper
     {
-        public IAsyncEnumerable<T> GetDataFromAllPages<T>(Dictionary<string, string> queryParams, int pagesCount, int requestCountInSecond, string path);
+        public IAsyncEnumerable<T> GetData<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage);
     }
     internal class ManyRequestsHelper : IManyRequestsHelper
     {
@@ -21,15 +22,16 @@ namespace MovieAPIs.Utils
             this.httpClient = httpClient;
             this.serializer = serializer;
         }
-        public async IAsyncEnumerable<T> GetDataFromAllPages<T>(Dictionary<string, string> queryParams, int pagesCount, int requestCountInSecond, string path)
+
+        public async IAsyncEnumerable<T> GetData<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage)
         {
-            var urls = UrlHelper.GetUrls(queryParams, pagesCount, path);
+            var urls = UrlHelper.GetUrls(queryParams, path, fromPage, toPage);
             var responses = GetResponsesAsync(urls, requestCountInSecond);
-            await foreach(var response in responses)
+            await foreach (var response in responses)
             {
-                var responseBody = await response.ReadContentOrThrowExceptionAsync();
+                var responseBody = await response.ReadAsStringContentOrThrowExceptionAsync();
                 var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<T>>(responseBody);
-                foreach(var item in filmsResponse.Films)
+                foreach (var item in filmsResponse.Films)
                 {
                     yield return item;
                 }

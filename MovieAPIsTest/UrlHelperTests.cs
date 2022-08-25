@@ -86,7 +86,7 @@ namespace MovieAPIsTest
             };
             var expectedUrls = new string[] { "home/room/bed?one=oneValue&two=twoValue&page=1", "home/room/bed?one=oneValue&two=twoValue&page=2" };
 
-            var actualUrls = UrlHelper.GetUrls(queryParams, expectedUrls.Length, path);
+            var actualUrls = UrlHelper.GetUrls(queryParams, path, 1, expectedUrls.Length);
 
             CollectionAssert.AreEqual(expectedUrls, actualUrls);
             Assert.IsFalse(queryParams.ContainsKey("page"));
