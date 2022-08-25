@@ -1,8 +1,7 @@
 ﻿using MovieAPIs.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MovieAPIs
@@ -18,10 +17,10 @@ namespace MovieAPIs
             this.httpClient = httpClient;
             manyRequestsHelper = new ManyRequestsHelper(httpClient, serializer);
         }
-        protected async Task<T> GetResponseDataAsync<T>(string path, Dictionary<string, string>? queryParams = null)
+        protected async Task<T> GetResponseDataAsync<T>(string path, CancellationToken ct, Dictionary<string, string>? queryParams = null)
         {
             string url = UrlHelper.GetUrl(path, queryParams);
-            HttpResponseMessage response = await httpClient.GetAsync(url);
+            HttpResponseMessage response = await httpClient.GetAsync(url, ct);
             if (!response.IsSuccessStatusCode)
                 HttpInvalidCodeHandler.ThrowException(response.StatusCode);
             string json = await response.Content.ReadAsStringAsync();

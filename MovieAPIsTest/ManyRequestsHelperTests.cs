@@ -2,13 +2,12 @@
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using MovieAPIs.Utils;
 using System.Net.Http;
 using System.Net;
+using System.Threading;
 using MovieAPIs.Models;
 
 namespace MovieAPIsTest
@@ -33,11 +32,11 @@ namespace MovieAPIsTest
         {
             var time = await Time(async () =>
             {
-                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>()) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(100)));
+                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(100)));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, requestCountInSecond, "testUrl");
+                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams,  expectedCount, requestCountInSecond, "testUrl", CancellationToken.None);
                 int count = 0;
                 await foreach(var dataFromPage in dataFromAllPages)
                 {
@@ -55,11 +54,11 @@ namespace MovieAPIsTest
         {
             var time = await Time(async () =>
             {
-                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>()) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200)));
+                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200)));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, requestCountInSecond, "testUrl");
+                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, requestCountInSecond, "testUrl", CancellationToken.None);
                 int count = 0;
                 await foreach (var dataFromPage in dataFromAllPages)
                 {

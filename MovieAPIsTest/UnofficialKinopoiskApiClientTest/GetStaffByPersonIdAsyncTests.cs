@@ -5,6 +5,7 @@ using MovieAPIs;
 using Moq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 
 namespace MovieAPIsTest
 {
@@ -20,7 +21,7 @@ namespace MovieAPIsTest
                 Content = new StringContent(@"{""personId"":37859,""nameRu"":""Леонардо ДиКаприо""}"),
             };
             var url = "https://kinopoiskapiunofficial.tech/api/v1/staff/37859";
-            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
+            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, CancellationToken.None) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var staffByPersonIdAsync = client.GetStaffByPersonIdAsync(37859).Result;
             Assert.IsTrue(staffByPersonIdAsync.PersonId == 37859 && staffByPersonIdAsync.NameRu == "Леонардо ДиКаприо");
@@ -35,7 +36,7 @@ namespace MovieAPIsTest
                 StatusCode = HttpStatusCode.BadRequest,
             };
             var url = "https://kinopoiskapiunofficial.tech/api/v1/staff/99999999";
-            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
+            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, CancellationToken.None) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetStaffByPersonIdAsync(99999999));
             Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest]);
@@ -50,7 +51,7 @@ namespace MovieAPIsTest
                 StatusCode = HttpStatusCode.Unauthorized,
             };
             var url = "https://kinopoiskapiunofficial.tech/api/v1/staff/37859";
-            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
+            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, CancellationToken.None) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetStaffByPersonIdAsync(37859));
             Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.Unauthorized]);
@@ -65,7 +66,7 @@ namespace MovieAPIsTest
                 StatusCode = HttpStatusCode.NotFound,
             };
             var url = "https://kinopoiskapiunofficial.tech/api/v1/staff/-1";
-            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url) == Task.FromResult<HttpResponseMessage>(response));
+            var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, CancellationToken.None) == Task.FromResult<HttpResponseMessage>(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetStaffByPersonIdAsync(-1));
             Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.NotFound]);
