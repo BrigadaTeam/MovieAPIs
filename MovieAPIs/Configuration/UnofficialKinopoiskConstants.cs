@@ -86,5 +86,8 @@ namespace MovieAPIs.Configuration
 
         [JsonProperty]
         public readonly string SequelsAndPrequelsPathSegment;
+
+        [JsonProperty]
+        public readonly int NumberFirstPage;
     }
 }

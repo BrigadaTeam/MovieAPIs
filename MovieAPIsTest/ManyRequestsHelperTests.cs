@@ -36,7 +36,8 @@ namespace MovieAPIsTest
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams,  expectedCount, requestCountInSecond, "testUrl", CancellationToken.None);
+                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
+
                 int count = 0;
                 await foreach(var dataFromPage in dataFromAllPages)
                 {
@@ -58,7 +59,7 @@ namespace MovieAPIsTest
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, requestCountInSecond, "testUrl", CancellationToken.None);
+                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
                 int count = 0;
                 await foreach (var dataFromPage in dataFromAllPages)
                 {
@@ -70,7 +71,6 @@ namespace MovieAPIsTest
             Assert.That(time, Is.GreaterThan(TimeSpan.FromSeconds(3))); // expectedCount(13) / requestCountInSecond(5) = min operating time(3)
             Assert.That(time, Is.LessThan(TimeSpan.FromSeconds(3.4)));
         }
-
         private async Task<HttpResponseMessage> GetHttpMessageAsync(TimeSpan time)
         {
             await Task.Delay(time);

@@ -29,11 +29,11 @@ namespace MovieAPIs.Utils
             return query.ToString().TrimEnd('&');
         }
 
-        internal static string[] GetUrls(Dictionary<string, string> queryParams, int pageCount, string path)
+        internal static string[] GetUrls(Dictionary<string, string> queryParams, string path, int fromPage, int toPage)
         {
             var urls = new LinkedList<string>();
 
-            for(int page = 1; page <= pageCount; page++)
+            for (int page = fromPage; page <= toPage; page++)
             {
                 queryParams["page"] = page.ToString();
                 string url = GetUrl(path, queryParams);

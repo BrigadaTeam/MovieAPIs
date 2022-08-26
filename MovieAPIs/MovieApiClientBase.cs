@@ -1,4 +1,5 @@
-﻿using MovieAPIs.Utils;
+using MovieAPIs.Utils;
+using MovieAPIs.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
@@ -10,7 +11,7 @@ namespace MovieAPIs
     {
         readonly IHttpClient httpClient;
         readonly ISerializer serializer;
-        internal readonly IManyRequestsHelper manyRequestsHelper;
+        readonly IManyRequestsHelper manyRequestsHelper;
         public MovieApiClientBase(IHttpClient httpClient, ISerializer serializer)
         {
             this.serializer = serializer;
@@ -23,9 +24,23 @@ namespace MovieAPIs
             HttpResponseMessage response = await httpClient.GetAsync(url, ct);
             if (!response.IsSuccessStatusCode)
                 HttpInvalidCodeHandler.ThrowException(response.StatusCode);
-            var jsonResponse = await response.Content.ReadAsStringAsync(ct);
+            string jsonResponse = await response.ReadAsStringContentOrThrowExceptionAsync(ct);
             ct.ThrowIfCancellationRequested();
             return serializer.Deserialize<T>(jsonResponse);
+        }
+
+        protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage, CancellationToken ct)
+        {
+            var filmsResponses = manyRequestsHelper.GetData<T>(queryParams, requestCountInSecond, path, fromPage, toPage, ct);
+            await foreach (var filmsResponse in filmsResponses)
+            {
+                yield return filmsResponse;
+            }
+        }
+
+        protected int GetPagesCount<T>(Task<FilmsResponseWithPagesCount<T>> response)
+        {
+            return response.Result.PagesCount;
         }
     }
 }

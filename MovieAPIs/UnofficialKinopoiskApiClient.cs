@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
+using System;
 using System.Threading.Tasks;
 using MovieAPIs.Configuration;
 using MovieAPIs.Models;
@@ -26,21 +27,22 @@ namespace MovieAPIs
             string path = $"{constants.FilmsUrlV22}/{id}";
             return await GetResponseDataAsync<Film>(path, ct);
         }
-
-        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromAllPagesAsync(CancellationToken ct = default, Tops topType = Tops.TOP_250_BEST_FILMS)
+        
+        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Range pageRange, CancellationToken ct = default, Tops topType = Tops.TOP_250_BEST_FILMS)
         {
-            var firstFilmsResponse = await GetTopFilmsAsync(ct, topType);
-            int pagesCount = firstFilmsResponse.PagesCount;
+            return GetTopFilmsFromPageRangeAsync(ct, pageRange.Start.Value, pageRange.End.Value, topType);
+        }
+        
+        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(CancellationToken ct = default, int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS)
+        {  
+            fromPage = fromPage == -1 ? constants.NumberFirstPage : fromPage;
+            toPage = toPage == -1 ? GetPagesCount(GetTopFilmsAsync(ct, topType)) : toPage;
             var queryParams = new Dictionary<string, string>
             {
                 ["type"] = topType.ToString()
             };
             string path = $"{constants.TopUrlV22}";
-            var filmsResponses = manyRequestsHelper.GetDataFromAllPages<FilmSearch>(queryParams, pagesCount, 5, path, ct);
-            await foreach (var filmsResponse in filmsResponses)
-            {
-                yield return filmsResponse;
-            }
+            return GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, 5, fromPage, toPage, ct);
         }
         public async Task<FilmsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, CancellationToken ct = default, int page = 1)
         {
