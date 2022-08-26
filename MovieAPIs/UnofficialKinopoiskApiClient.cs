@@ -32,21 +32,16 @@ namespace MovieAPIs
         {
             return GetTopFilmsFromPageRangeAsync(pageRange.Start.Value, pageRange.End.Value, topType);
         }
-        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage, int toPage, Tops topType = Tops.TOP_250_BEST_FILMS)
-        {
+        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS)
+        {  
+            fromPage = fromPage == -1 ? constants.NumberFirstPage : fromPage;
+            toPage = toPage == -1 ? GetPagesCount(GetTopFilmsAsync(topType)) : toPage;
             var queryParams = new Dictionary<string, string>
             {
                 ["type"] = topType.ToString()
             };
             string path = $"{constants.TopUrlV22}";
             return GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, 5, fromPage, toPage);
-        }
-
-        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Tops topType = Tops.TOP_250_BEST_FILMS)
-        {
-            var firstFilmsResponse = GetTopFilmsAsync(topType);
-            int pagesCount = firstFilmsResponse.Result.PagesCount;
-            return GetTopFilmsFromPageRangeAsync(constants.NumberFirstPage, pagesCount, topType);
         }
         public async Task<FilmsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1)
         {

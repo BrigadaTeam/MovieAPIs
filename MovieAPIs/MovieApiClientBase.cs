@@ -1,4 +1,5 @@
-﻿using MovieAPIs.Utils;
+﻿using MovieAPIs.Models;
+using MovieAPIs.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,11 @@ namespace MovieAPIs
             {
                 yield return filmsResponse;
             }
+        }
+
+        protected int GetPagesCount<T>(Task<FilmsResponseWithPagesCount<T>> response)
+        {
+            return response.Result.PagesCount;
         }
     }
 }
