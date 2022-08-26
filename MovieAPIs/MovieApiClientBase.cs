@@ -20,22 +20,12 @@ namespace MovieAPIs
         internal async Task<T> GetResponseDataAsync<T>(string path, CancellationToken ct, Dictionary<string, string>? queryParams = null)
         {
             var url = UrlHelper.GetUrl(path, queryParams);
-            try
-            {
-                HttpResponseMessage response = await httpClient.GetAsync(url, ct);
-                if (!response.IsSuccessStatusCode)
-                    HttpInvalidCodeHandler.ThrowException(response.StatusCode);
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                return serializer.Deserialize<T>(jsonResponse);
-            }
-            catch (TaskCanceledException) when (ct.IsCancellationRequested)
-            {
-                return default;
-            }
-            catch (TaskCanceledException)
-            {
-                throw new TaskCanceledException("Request timed out");
-            }
+            HttpResponseMessage response = await httpClient.GetAsync(url, ct);
+            if (!response.IsSuccessStatusCode)
+                HttpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var jsonResponse = await response.Content.ReadAsStringAsync(ct);
+            ct.ThrowIfCancellationRequested();
+            return serializer.Deserialize<T>(jsonResponse);
         }
     }
 }
