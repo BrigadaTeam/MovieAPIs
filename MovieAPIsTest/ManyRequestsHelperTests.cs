@@ -37,7 +37,7 @@ namespace MovieAPIsTest
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, requestCountInSecond, "testUrl");
+                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount);
                 int count = 0;
                 await foreach(var dataFromPage in dataFromAllPages)
                 {
@@ -59,7 +59,7 @@ namespace MovieAPIsTest
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetDataFromAllPages<Nomination>(queryParams, expectedCount, requestCountInSecond, "testUrl");
+                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount);
                 int count = 0;
                 await foreach (var dataFromPage in dataFromAllPages)
                 {

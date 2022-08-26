@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MovieAPIs.Configuration;
 using MovieAPIs.Models;
@@ -27,21 +28,20 @@ namespace MovieAPIs
             string path = $"{constants.FilmsUrlV22}/{id}";
             return await GetResponseDataAsync<Film>(path);
         }
-
-        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromAllPagesAsync(Tops topType = Tops.TOP_250_BEST_FILMS)
+        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Range pageRange, Tops topType = Tops.TOP_250_BEST_FILMS)
         {
-            var firstFilmsResponse = await GetTopFilmsAsync(topType);
-            int pagesCount = firstFilmsResponse.PagesCount;
+            return GetTopFilmsFromPageRangeAsync(pageRange.Start.Value, pageRange.End.Value, topType);
+        }
+        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS)
+        {  
+            fromPage = fromPage == -1 ? constants.NumberFirstPage : fromPage;
+            toPage = toPage == -1 ? GetPagesCount(GetTopFilmsAsync(topType)) : toPage;
             var queryParams = new Dictionary<string, string>
             {
                 ["type"] = topType.ToString()
             };
             string path = $"{constants.TopUrlV22}";
-            var filmsResponses = manyRequestsHelper.GetDataFromAllPages<FilmSearch>(queryParams, pagesCount, 5, path);
-            await foreach (var filmsResponse in filmsResponses)
-            {
-                yield return filmsResponse;
-            }
+            return GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, 5, fromPage, toPage);
         }
         public async Task<FilmsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1)
         {
