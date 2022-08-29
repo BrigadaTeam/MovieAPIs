@@ -7,7 +7,7 @@ namespace MovieAPIs.Utils
 {
     public interface IHttpClient
     {
-        Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct);
+        Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct = default);
     }
 
     internal class InternalHttpClient : IHttpClient

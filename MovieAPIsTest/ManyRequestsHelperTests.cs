@@ -3,12 +3,12 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using MovieAPIs.Utils;
 using System.Net.Http;
 using System.Net;
 using System.Threading;
 using MovieAPIs.Models;
+using MovieAPIsTest.UnofficialKinopoiskApiClientTest;
 
 namespace MovieAPIsTest
 {
@@ -30,13 +30,19 @@ namespace MovieAPIsTest
         [Test]
         public async Task QuickResponses()
         {
-            var time = await Time(async () =>
+            var response = new HttpResponseMessage()
             {
-                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(100)));
+                StatusCode = HttpStatusCode.Accepted,
+                Content = new StringContent(@"{""items"":[{""name"":""Сатурн""}]}")
+            };
+            var time = await MovieApiTestHelper.GetWorkTime(async () =>
+            {
+                IHttpClient httpClient = Mock.Of<IHttpClient>(x => 
+                    x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(100), response));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
+                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, It.IsAny<CancellationToken>());
 
                 int count = 0;
                 await foreach(var dataFromPage in dataFromAllPages)
@@ -53,13 +59,19 @@ namespace MovieAPIsTest
         [Test]
         public async Task SlowResponses()
         {
-            var time = await Time(async () =>
+            var response = new HttpResponseMessage()
             {
-                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200)));
+                StatusCode = HttpStatusCode.Accepted,
+                Content = new StringContent(@"{""items"":[{""name"":""Сатурн""}]}")
+            };
+            var time = await MovieApiTestHelper.GetWorkTime(async () =>
+            {
+                IHttpClient httpClient = Mock.Of<IHttpClient>(x => 
+                    x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200), response));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
+                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, It.IsAny<CancellationToken>());
                 int count = 0;
                 await foreach (var dataFromPage in dataFromAllPages)
                 {
@@ -70,21 +82,6 @@ namespace MovieAPIsTest
             });
             Assert.That(time, Is.GreaterThan(TimeSpan.FromSeconds(3))); // expectedCount(13) / requestCountInSecond(5) = min operating time(3)
             Assert.That(time, Is.LessThan(TimeSpan.FromSeconds(3.4)));
-        }
-        private async Task<HttpResponseMessage> GetHttpMessageAsync(TimeSpan time)
-        {
-            await Task.Delay(time);
-            return await Task.FromResult(new HttpResponseMessage { 
-                StatusCode = HttpStatusCode.Accepted,
-                Content = new StringContent(@"{""items"":[{""name"":""Сатурн""}]}")
-            });
-        }
-        private async Task<TimeSpan> Time(Func<Task> toTime)
-        {
-            var timer = Stopwatch.StartNew();
-            await toTime();
-            timer.Stop();
-            return timer.Elapsed;
         }
     }
 }
