@@ -22,7 +22,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var url = "https://kinopoiskapiunofficial.tech/api/v2.2/films/301";
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
-            var film = await client.GetFilmByIdAsync(301, It.IsAny<CancellationToken>());
+            var film = await client.GetFilmByIdAsync(301);
  
             Assert.IsTrue(film.KinopoiskId == 301 && film.NameRu == "Матрица");
         }

@@ -13,7 +13,8 @@ namespace MovieAPIs
         readonly IHttpClient httpClient;
         readonly ISerializer serializer;
         readonly IManyRequestsHelper manyRequestsHelper;
-        public MovieApiClientBase(IHttpClient httpClient, ISerializer serializer)
+
+        protected MovieApiClientBase(IHttpClient httpClient, ISerializer serializer)
         {
             this.serializer = serializer;
             this.httpClient = httpClient;

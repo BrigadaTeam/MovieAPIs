@@ -20,7 +20,7 @@ namespace MovieAPIs.Utils
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
         }
-        public Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct)
+        public Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct = default)
         {
             return client.GetAsync(requestUrl, ct);
         }
