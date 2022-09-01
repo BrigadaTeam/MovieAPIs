@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -70,31 +69,41 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.NotFound]);
         }
         
-        [TestCase(5)]
+        /*[TestCase(5)]
         [TestCase(10)]
         [TestCase(100)]
-        [TestCase(1000)]
-        public async Task CancellationTokenTests_CompareRunningTime_SuccessfulTaskAbort(int runningTime)
+        [TestCase(1000)]*/
+        
+        [Test]
+        public async Task CancellationTokenTests_CompareRunningTime_SuccessfulTaskAbort(/*int runningTime*/)
         {
-            var cSource = new CancellationTokenSource();
             var response = new HttpResponseMessage()
             {
                 StatusCode = HttpStatusCode.Accepted
             };
-            var httpClient = Mock.Of<IHttpClient>(x =>
-                x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(runningTime), response));
-
-            var client = new UnofficialKinopoiskApiClient(httpClient);
-
+            
             var time1 = await MovieApiTestHelper.GetWorkTime(async () =>
             {
+                var cSource = new CancellationTokenSource();
+                var httpClient = Mock.Of<IHttpClient>(x =>
+                    x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(5000), response));
+                var client = new UnofficialKinopoiskApiClient(httpClient);
                 await client.GetAwardsByIdAsync(420923, cSource.Token);
             });
             
             var time2 = await MovieApiTestHelper.GetWorkTime(async () =>
             {
-                await client.GetAwardsByIdAsync(420923, cSource.Token);
-                cSource.Cancel();
+                try
+                {
+                    var cSource = new CancellationTokenSource();
+                    var httpClient = Mock.Of<IHttpClient>(x =>
+                        x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(5000), response));
+                    var client = new UnofficialKinopoiskApiClient(httpClient);
+                    var lol = client.GetAwardsByIdAsync(420925, cSource.Token);
+                    cSource.Cancel();
+                    var lol2 = await lol;
+                }
+                catch (OperationCanceledException e) { }
             });
             
             Assert.IsTrue(time1 > time2);
