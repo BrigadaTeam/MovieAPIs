@@ -11,38 +11,41 @@ namespace MovieAPIs
     {
         readonly UnofficialKinopoiskConstants constants;
 
+        public UnofficialKinopoiskApiClient(string apiKey) : this(new InternalHttpClient(apiKey)) { }
 
-        public UnofficialKinopoiskApiClient(string apiKey) : this(new InternalHttpClient(apiKey), new NewtonsoftJsonSerializer()) { }
-
-        public UnofficialKinopoiskApiClient(string apiKey, ISerializer serializer) : this(new InternalHttpClient(apiKey), serializer) { }
-
-        public UnofficialKinopoiskApiClient(IHttpClient httpClient) : this(httpClient, new NewtonsoftJsonSerializer()) { }
-
-        public UnofficialKinopoiskApiClient(IHttpClient httpClient, ISerializer serializer) : base(httpClient, serializer)
+        public UnofficialKinopoiskApiClient(IHttpClient httpClient) : base(httpClient)
         {
             constants = UnofficialKinopoiskConstants.GetUnofficialKinopoiskConstants(new NewtonsoftJsonSerializer());
         }
 
-        public async Task<Film> GetFilmByIdAsync(int id)
+        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Range pageRange, Tops topType = Tops.TOP_250_BEST_FILMS)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}";
-            return await GetResponseDataAsync<Film>(path);
+            await foreach (var filmSearch in GetTopFilmsFromPageRangeAsync(pageRange.Start.Value, pageRange.End.Value, topType).ConfigureAwait(false))
+            {
+                yield return filmSearch;
+            }
         }
-        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Range pageRange, Tops topType = Tops.TOP_250_BEST_FILMS)
-        {
-            return GetTopFilmsFromPageRangeAsync(pageRange.Start.Value, pageRange.End.Value, topType);
-        }
-        public IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS)
+        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS)
         {  
             fromPage = fromPage == -1 ? constants.NumberFirstPage : fromPage;
-            toPage = toPage == -1 ? GetPagesCount(GetTopFilmsAsync(topType)) : toPage;
+            toPage = toPage == -1 ? await GetPagesCountAsync(GetTopFilmsAsync(topType)).ConfigureAwait(false) : toPage;
             var queryParams = new Dictionary<string, string>
             {
                 ["type"] = topType.ToString()
             };
             string path = $"{constants.TopUrlV22}";
-            return GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, 5, fromPage, toPage);
+            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, 5, fromPage, toPage).ConfigureAwait(false))
+            {
+                yield return filmSearch;
+            }
         }
+
+        public async Task<Film> GetFilmByIdAsync(int id)
+        {
+            string path = $"{constants.FilmsUrlV22}/{id}";
+            return await GetResponseDataAsync<Film>(path).ConfigureAwait(false);
+        }
+
         public async Task<FilmsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1)
         {
             string path = $"{constants.SearchByKeywordUrlV21}";
@@ -51,13 +54,13 @@ namespace MovieAPIs
                 ["keyword"] = keyword,
                 ["page"] = page.ToString()
             };
-            return await GetResponseDataAsync<FilmsResponseWithPagesCount<FilmSearch>>(path, queryParams);
+            return await GetResponseDataAsync<FilmsResponseWithPagesCount<FilmSearch>>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<GenresAndCountriesResponse> GetGenresAndCountriesAsync()
         {
             string path = $"{constants.FiltersUrlV22}";
-            return await GetResponseDataAsync<GenresAndCountriesResponse>(path);
+            return await GetResponseDataAsync<GenresAndCountriesResponse>(path).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponseWithPagesCount<Film>> GetFilmsByFiltersAsync(int countryId = (int)Filter.ALL,
@@ -80,13 +83,13 @@ namespace MovieAPIs
                 ["page"] = page.ToString()
             };
             string path = $"{constants.FiltersUrlV22}";
-            return await GetResponseDataAsync<FilmsResponseWithPagesCount<Film>>(path, queryParams);
+            return await GetResponseDataAsync<FilmsResponseWithPagesCount<Film>>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<RelatedFilm>> GetRelatedFilmsAsync(int id)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.SimilarsPathSegment}";
-            return await GetResponseDataAsync<FilmsResponse<RelatedFilm>>(path);
+            return await GetResponseDataAsync<FilmsResponse<RelatedFilm>>(path).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponseWithPagesCount<FilmSearch>> GetTopFilmsAsync(
@@ -98,19 +101,19 @@ namespace MovieAPIs
                 ["page"] = page.ToString()
             };
             string path = $"{constants.TopUrlV22}";
-            return await GetResponseDataAsync<FilmsResponseWithPagesCount<FilmSearch>>(path, queryParams);
+            return await GetResponseDataAsync<FilmsResponseWithPagesCount<FilmSearch>>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<FactsAndMistakes>> GetFilmFactsAndMistakesAsync(int id)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.FactsPathSegment}";
-            return await GetResponseDataAsync<FilmsResponse<FactsAndMistakes>>(path);
+            return await GetResponseDataAsync<FilmsResponse<FactsAndMistakes>>(path).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<FilmDistributionsResponseItems>> GetFilmDistributionsAsync(int id)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.DistributionsPathSegment}";
-            return await GetResponseDataAsync<FilmsResponse<FilmDistributionsResponseItems>>(path);
+            return await GetResponseDataAsync<FilmsResponse<FilmDistributionsResponseItems>>(path).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponseWithPagesCount<FilmRelease>> GetDigitalReleasesAsync(int year, Months month,
@@ -123,13 +126,13 @@ namespace MovieAPIs
                 ["page"] = page.ToString()
             };
             string path = $"{constants.ReleasesUrlV21}";
-            return await GetResponseDataAsync<FilmsResponseWithPagesCount<FilmRelease>>(path, queryParams);
+            return await GetResponseDataAsync<FilmsResponseWithPagesCount<FilmRelease>>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<FilmSearch[]> GetSequelsAndPrequelsByIdAsync(int id)
         {
             string path = $"{constants.FilmsUrlV21}/{id}/{constants.SequelsAndPrequelsPathSegment}";
-            return await GetResponseDataAsync<FilmSearch[]>(path);
+            return await GetResponseDataAsync<FilmSearch[]>(path).ConfigureAwait(false);
         }
 
         public async Task<ViewerReviewsResponse> GetViewerReviewsByIdAsync(int id, int page = 1,
@@ -141,19 +144,19 @@ namespace MovieAPIs
                 ["order"] = order.ToString(),
             };
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.ReviewsPathSegment}";
-            return await GetResponseDataAsync<ViewerReviewsResponse>(path, queryParams);
+            return await GetResponseDataAsync<ViewerReviewsResponse>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<MonetizationInfo>> GetBoxOfficeByIdAsync(int id)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.BoxOfficePathSegment}";
-            return await GetResponseDataAsync<FilmsResponse<MonetizationInfo>>(path);
+            return await GetResponseDataAsync<FilmsResponse<MonetizationInfo>>(path).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<Season>> GetSeasonsDataByIdAsync(int id)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.SeasonsPathSegment}";
-            return await GetResponseDataAsync<FilmsResponse<Season>>(path);
+            return await GetResponseDataAsync<FilmsResponse<Season>>(path).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponseWithPagesCount<ImageResponse>> GetImagesByIdAsync(int id,
@@ -165,7 +168,7 @@ namespace MovieAPIs
                 ["type"] = type.ToString(),
             };
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.ImagesPathSegment}";
-            return await GetResponseDataAsync<FilmsResponseWithPagesCount<ImageResponse>>(path, queryParams);
+            return await GetResponseDataAsync<FilmsResponseWithPagesCount<ImageResponse>>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<StaffResponse[]> GetStaffByFilmIdAsync(int filmId)
@@ -175,7 +178,7 @@ namespace MovieAPIs
                 ["filmId"] = filmId.ToString(),
             };
             string path = $"{constants.StaffUrlV1}";
-            return await GetResponseDataAsync<StaffResponse[]>(path, queryParams);
+            return await GetResponseDataAsync<StaffResponse[]>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<FilmPremiere>> GetPremieresListAsync(int year, Months month)
@@ -186,19 +189,19 @@ namespace MovieAPIs
                 ["month"] = month.ToString(),
             };
             string path = $"{constants.PremieresUrlV22}";
-            return await GetResponseDataAsync<FilmsResponse<FilmPremiere>>(path, queryParams);
+            return await GetResponseDataAsync<FilmsResponse<FilmPremiere>>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<Video>> GetTrailersAndTeasersByIdAsync(int id)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.VideosPathSegment}";
-            return await GetResponseDataAsync<FilmsResponse<Video>>(path);
+            return await GetResponseDataAsync<FilmsResponse<Video>>(path).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<Nomination>> GetAwardsByIdAsync(int id)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.AwardsPathSegment}";
-            return await GetResponseDataAsync<FilmsResponse<Nomination>>(path);
+            return await GetResponseDataAsync<FilmsResponse<Nomination>>(path).ConfigureAwait(false);
         }
 
         public async Task<FilmsResponse<FilmPersonInfo>> GetPersonByNameAsync(string name, int page = 1)
@@ -209,13 +212,13 @@ namespace MovieAPIs
                 ["page"] = page.ToString()
             };
             string path = $"{constants.PersonsUrlV1}";
-            return await GetResponseDataAsync<FilmsResponse<FilmPersonInfo>>(path, queryParams);
+            return await GetResponseDataAsync<FilmsResponse<FilmPersonInfo>>(path, queryParams).ConfigureAwait(false);
         }
 
         public async Task<PersonResponse> GetStaffByPersonIdAsync(int personId)
         {
             string path = $"{constants.StaffUrlV1}/{personId}";
-            return await GetResponseDataAsync<PersonResponse>(path);
+            return await GetResponseDataAsync<PersonResponse>(path).ConfigureAwait(false);
         }
     }
 }

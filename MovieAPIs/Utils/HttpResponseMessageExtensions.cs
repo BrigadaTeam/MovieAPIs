@@ -9,11 +9,11 @@ namespace MovieAPIs.Utils
 {
     internal static class HttpResponseMessageExtensions
     {
-        internal static Task<string> ReadAsStringContentOrThrowExceptionAsync(this HttpResponseMessage response)
+        internal async static Task<string> ReadAsStringContentOrThrowExceptionAsync(this HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
                 HttpInvalidCodeHandler.ThrowException(response.StatusCode);
-            return response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
     }
 }
