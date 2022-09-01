@@ -13,32 +13,31 @@ namespace MovieAPIs
         readonly IHttpClient httpClient;
         readonly ISerializer serializer;
         readonly IManyRequestsHelper manyRequestsHelper;
-        public MovieApiClientBase(IHttpClient httpClient, ISerializer serializer)
+        public MovieApiClientBase(IHttpClient httpClient)
         {
-            this.serializer = serializer;
+            serializer = new NewtonsoftJsonSerializer();
             this.httpClient = httpClient;
             manyRequestsHelper = new ManyRequestsHelper(httpClient, serializer);
         }
         protected async Task<T> GetResponseDataAsync<T>(string path, Dictionary<string, string>? queryParams = null)
         {
             string url = UrlHelper.GetUrl(path, queryParams);
-            HttpResponseMessage response = await httpClient.GetAsync(url);
-            string json = await response.ReadAsStringContentOrThrowExceptionAsync();
+            HttpResponseMessage response = await httpClient.GetAsync(url).ConfigureAwait(false);
+            string json = await response.ReadAsStringContentOrThrowExceptionAsync().ConfigureAwait(false);
             return serializer.Deserialize<T>(json);
         }
 
         protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage)
         {
-            var filmsResponses = manyRequestsHelper.GetData<T>(queryParams, requestCountInSecond, path, fromPage, toPage);
-            await foreach (var filmsResponse in filmsResponses)
+            await foreach (var data in manyRequestsHelper.GetDataAsync<T>(queryParams, requestCountInSecond, path, fromPage, toPage).ConfigureAwait(false))
             {
-                yield return filmsResponse;
+                yield return data;
             }
         }
 
-        protected int GetPagesCount<T>(Task<FilmsResponseWithPagesCount<T>> response)
+        protected async Task<int> GetPagesCountAsync<T>(Task<FilmsResponseWithPagesCount<T>> response)
         {
-            return response.Result.PagesCount;
+            return (await response.ConfigureAwait(false)).PagesCount;
         }
     }
 }

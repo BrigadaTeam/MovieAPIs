@@ -11,7 +11,7 @@ namespace MovieAPIs.Utils
 {
     internal interface IManyRequestsHelper
     {
-        public IAsyncEnumerable<T> GetData<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage);
+        public IAsyncEnumerable<T> GetDataAsync<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage);
     }
     internal class ManyRequestsHelper : IManyRequestsHelper
     {
@@ -23,13 +23,12 @@ namespace MovieAPIs.Utils
             this.serializer = serializer;
         }
 
-        public async IAsyncEnumerable<T> GetData<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage)
+        public async IAsyncEnumerable<T> GetDataAsync<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage)
         {
             var urls = UrlHelper.GetUrls(queryParams, path, fromPage, toPage);
-            var responses = GetResponsesAsync(urls, requestCountInSecond);
-            await foreach (var response in responses)
+            await foreach (var response in GetResponsesAsync(urls, requestCountInSecond).ConfigureAwait(false))
             {
-                var responseBody = await response.ReadAsStringContentOrThrowExceptionAsync();
+                var responseBody = await response.ReadAsStringContentOrThrowExceptionAsync().ConfigureAwait(false);
                 var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<T>>(responseBody);
                 foreach (var item in filmsResponse.Films)
                 {
@@ -47,10 +46,10 @@ namespace MovieAPIs.Utils
                 var timer = Task.Delay(TimeSpan.FromSeconds(1));
                 var tasks = requestUrls.Skip(index).Take(requestCountInSecond).Select(x => httpClient.GetAsync(x));
                 var tasksAndTimer = tasks.Concat(new Task[] { timer });
-                await Task.WhenAll(tasksAndTimer);
+                await Task.WhenAll(tasksAndTimer).ConfigureAwait(false);
                 foreach (var task in tasks)
                 {
-                    yield return await task;
+                    yield return await task.ConfigureAwait(false);
                 }
                 index += requestCountInSecond;
             }
