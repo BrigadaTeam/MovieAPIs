@@ -86,7 +86,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             {
                 var cSource = new CancellationTokenSource();
                 var httpClient = Mock.Of<IHttpClient>(x =>
-                    x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(5000), response));
+                    x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(1000), response, cSource.Token));
                 var client = new UnofficialKinopoiskApiClient(httpClient);
                 await client.GetAwardsByIdAsync(420923, cSource.Token);
             });
@@ -97,7 +97,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
                 {
                     var cSource = new CancellationTokenSource();
                     var httpClient = Mock.Of<IHttpClient>(x =>
-                        x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(5000), response));
+                        x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(1000), response, cSource.Token));
                     var client = new UnofficialKinopoiskApiClient(httpClient);
                     var lol = client.GetAwardsByIdAsync(420925, cSource.Token);
                     cSource.Cancel();
@@ -107,7 +107,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             });
             
             Assert.IsTrue(time1 > time2);
-            Assert.IsTrue(time2 < TimeSpan.FromMilliseconds(1));
+            Assert.IsTrue(time2 < TimeSpan.FromMilliseconds(100));
         }
     }
 }
