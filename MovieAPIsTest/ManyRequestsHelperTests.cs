@@ -16,6 +16,7 @@ namespace MovieAPIsTest
     {
         ISerializer serializer;
         Dictionary<string, string> queryParams;
+        HttpResponseMessage response;
 
         [OneTimeSetUp]
         public void Setup()
@@ -25,25 +26,22 @@ namespace MovieAPIsTest
             {
                 ["type"] = Tops.TOP_250_BEST_FILMS.ToString()
             };
+            response = new HttpResponseMessage()
+            {
+                StatusCode = HttpStatusCode.Accepted
+            };
         }
         
         [Test]
         public async Task QuickResponses()
         {
-            var response = new HttpResponseMessage()
-            {
-                StatusCode = HttpStatusCode.Accepted,
-                Content = new StringContent(@"{""items"":[{""name"":""Сатурн""}]}")
-            };
             var time = await MovieApiTestHelper.GetWorkTime(async () =>
             {
-                IHttpClient httpClient = Mock.Of<IHttpClient>(x => 
-                    x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(100), response));
+                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(100), response));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, It.IsAny<CancellationToken>());
-
+                var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount,  CancellationToken.None);
                 int count = 0;
                 await foreach(var dataFromPage in dataFromAllPages)
                 {
@@ -59,19 +57,13 @@ namespace MovieAPIsTest
         [Test]
         public async Task SlowResponses()
         {
-            var response = new HttpResponseMessage()
-            {
-                StatusCode = HttpStatusCode.Accepted,
-                Content = new StringContent(@"{""items"":[{""name"":""Сатурн""}]}")
-            };
             var time = await MovieApiTestHelper.GetWorkTime(async () =>
             {
-                IHttpClient httpClient = Mock.Of<IHttpClient>(x => 
-                    x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200), response));
+                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(),It.IsAny<CancellationToken>()) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200), response));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetData<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, It.IsAny<CancellationToken>());
+                var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
                 int count = 0;
                 await foreach (var dataFromPage in dataFromAllPages)
                 {

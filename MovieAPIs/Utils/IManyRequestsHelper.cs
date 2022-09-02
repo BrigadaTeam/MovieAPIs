@@ -11,7 +11,7 @@ namespace MovieAPIs.Utils
 {
     internal interface IManyRequestsHelper
     {
-        public IAsyncEnumerable<T> GetData<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage, CancellationToken ct);
+        public IAsyncEnumerable<T> GetDataAsync<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage, CancellationToken ct);
     }
     internal class ManyRequestsHelper : IManyRequestsHelper
     {
@@ -22,13 +22,13 @@ namespace MovieAPIs.Utils
             this.httpClient = httpClient;
             this.serializer = serializer;
         }
-        public async IAsyncEnumerable<T> GetData<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage, [EnumeratorCancellation] CancellationToken ct)
+        public async IAsyncEnumerable<T> GetDataAsync<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage, [EnumeratorCancellation] CancellationToken ct)
         {
             var urls = UrlHelper.GetUrls(queryParams, path, fromPage, toPage);
-            var responses = GetResponsesAsync(urls, requestCountInSecond, ct);
-            await foreach (var response in responses.WithCancellation(ct))
+            
+            await foreach (var response in GetResponsesAsync(urls, requestCountInSecond, ct).ConfigureAwait(false))
             {
-                var responseBody = await response.ReadAsStringContentOrThrowExceptionAsync(ct);
+                var responseBody = await response.ReadAsStringContentOrThrowExceptionAsync(ct).ConfigureAwait(false);
                 var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<T>>(responseBody);
                 foreach (var item in filmsResponse.Films)
                 {
@@ -39,19 +39,17 @@ namespace MovieAPIs.Utils
 
         async IAsyncEnumerable<HttpResponseMessage> GetResponsesAsync(IEnumerable<string> requestUrls, int requestCountInSecond, [EnumeratorCancellation] CancellationToken ct)
         {
-            var index = 0;
-            var urls = requestUrls as string[] ?? requestUrls.ToArray();
-            var count = urls.Count();
+            int index = 0;
+            int count = requestUrls.Count();
             while (index < count)
             {
-                var tasks = urls.Skip(index).Take(requestCountInSecond).Select(x => httpClient.GetAsync(x, ct));
-                var enumerable = tasks as Task<HttpResponseMessage>[] ?? tasks.ToArray();
                 var timer = Task.Delay(TimeSpan.FromSeconds(1), ct);
-                var tasksAndTimer = enumerable.Concat(new[] { timer });
-                await Task.WhenAll(tasksAndTimer);
-                foreach (var task in enumerable)
+                var tasks = requestUrls.Skip(index).Take(requestCountInSecond).Select(x => httpClient.GetAsync(x, ct));
+                var tasksAndTimer = tasks.Concat(new [] { timer });
+                await Task.WhenAll(tasksAndTimer).ConfigureAwait(false);
+                foreach (var task in tasks)
                 {
-                    yield return await task;
+                    yield return await task.ConfigureAwait(false);
                 }
                 index += requestCountInSecond;
             }

@@ -2,7 +2,7 @@
 
 namespace MovieAPIs.Utils
 {
-    public interface ISerializer
+    internal interface ISerializer
     {
         internal T Deserialize<T>(string json);
     }
