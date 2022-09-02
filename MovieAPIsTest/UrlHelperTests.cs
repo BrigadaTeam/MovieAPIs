@@ -24,15 +24,15 @@ namespace MovieAPIsTest
             Assert.Throws<ArgumentException>(() => UrlHelper.GetUrl(path));
         }
 
-        [TestCaseSource(nameof(GetQueryTestSource))]
-        public void GetQueryTest(Dictionary<string, string> queryParams, string expectedQuery)
+        [TestCaseSource(nameof(getQueryTestSource))]
+        public void GetQueryTest(Dictionary<string, string>? queryParams, string expectedQuery)
         {
             string actualQuery = UrlHelper.GetQuery(queryParams);
 
             Assert.AreEqual(expectedQuery, actualQuery);
         }
 
-        [TestCaseSource(nameof(GetUrlWithQueryTestSource))]
+        [TestCaseSource(nameof(getUrlWithQueryTestSource))]
         public void GetUrlWithQueryTest(Dictionary<string, string> queryParams, string path, string expectedUrl)
         {
             string actualUrl = UrlHelper.GetUrl(path, queryParams);
@@ -40,7 +40,7 @@ namespace MovieAPIsTest
             Assert.AreEqual(expectedUrl, actualUrl);
         }
 
-        static object[] GetQueryTestSource =
+        static object[] getQueryTestSource =
         {
             new object[] { new Dictionary<string, string>
             {
@@ -59,7 +59,7 @@ namespace MovieAPIsTest
             new object[] { null, string.Empty }
         };
 
-        static object[] GetUrlWithQueryTestSource =
+        static object[] getUrlWithQueryTestSource =
         {
             new object[] { new Dictionary<string, string>
             {
@@ -84,7 +84,7 @@ namespace MovieAPIsTest
                 ["one"] = "oneValue",
                 ["two"] = "twoValue"
             };
-            var expectedUrls = new string[] { "home/room/bed?one=oneValue&two=twoValue&page=1", "home/room/bed?one=oneValue&two=twoValue&page=2" };
+            var expectedUrls = new[] { "home/room/bed?one=oneValue&two=twoValue&page=1", "home/room/bed?one=oneValue&two=twoValue&page=2" };
 
             var actualUrls = UrlHelper.GetUrls(queryParams, path, 1, expectedUrls.Length);
 

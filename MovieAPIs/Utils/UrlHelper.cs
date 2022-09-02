@@ -5,7 +5,7 @@ using System;
 
 namespace MovieAPIs.Utils
 {
-    static internal class UrlHelper
+    internal static class UrlHelper
     {
         internal static string GetUrl(string path, Dictionary<string, string>? queryParams = null)
         {
@@ -16,7 +16,7 @@ namespace MovieAPIs.Utils
                 return path;
             return $"{path}?{query}";
         }
-        internal static string GetQuery(Dictionary<string, string> queryParams)
+        internal static string GetQuery(Dictionary<string, string>? queryParams)
         {
             if (queryParams == null || queryParams.Count == 0)
                 return string.Empty;
@@ -24,7 +24,7 @@ namespace MovieAPIs.Utils
             foreach (var queryParam in queryParams)
             {
                 if(!string.IsNullOrEmpty(queryParam.Value))
-                query.Append($"{queryParam.Key}={queryParam.Value}&");
+                    query.Append($"{queryParam.Key}={queryParam.Value}&");
             }
             return query.ToString().TrimEnd('&');
         }
@@ -41,7 +41,6 @@ namespace MovieAPIs.Utils
             }
 
             queryParams.Remove("page");
-
             return urls.ToArray();
         }
     }

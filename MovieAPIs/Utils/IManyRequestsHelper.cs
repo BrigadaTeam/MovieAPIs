@@ -1,10 +1,9 @@
-﻿using MovieAPIs.Configuration;
-using MovieAPIs.Models;
+﻿using MovieAPIs.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +22,7 @@ namespace MovieAPIs.Utils
             this.httpClient = httpClient;
             this.serializer = serializer;
         }
-        public async IAsyncEnumerable<T> GetData<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage, CancellationToken ct)
+        public async IAsyncEnumerable<T> GetData<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage, [EnumeratorCancellation] CancellationToken ct)
         {
             var urls = UrlHelper.GetUrls(queryParams, path, fromPage, toPage);
             var responses = GetResponsesAsync(urls, requestCountInSecond, ct);
@@ -38,17 +37,19 @@ namespace MovieAPIs.Utils
             }
         }
 
-        async IAsyncEnumerable<HttpResponseMessage> GetResponsesAsync(IEnumerable<string> requestUrls, int requestCountInSecond, CancellationToken ct)
+        async IAsyncEnumerable<HttpResponseMessage> GetResponsesAsync(IEnumerable<string> requestUrls, int requestCountInSecond, [EnumeratorCancellation] CancellationToken ct)
         {
-            int index = 0;
-            int count = requestUrls.Count();
+            var index = 0;
+            var urls = requestUrls as string[] ?? requestUrls.ToArray();
+            var count = urls.Count();
             while (index < count)
             {
-                var timer = Task.Delay(TimeSpan.FromSeconds(1));
-                var tasks = requestUrls.Skip(index).Take(requestCountInSecond).Select(x => httpClient.GetAsync(x, ct));
-                var tasksAndTimer = tasks.Concat(new Task[] { timer });
+                var tasks = urls.Skip(index).Take(requestCountInSecond).Select(x => httpClient.GetAsync(x, ct));
+                var enumerable = tasks as Task<HttpResponseMessage>[] ?? tasks.ToArray();
+                var timer = Task.Delay(TimeSpan.FromSeconds(1), ct);
+                var tasksAndTimer = enumerable.Concat(new[] { timer });
                 await Task.WhenAll(tasksAndTimer);
-                foreach (var task in tasks)
+                foreach (var task in enumerable)
                 {
                     yield return await task;
                 }
