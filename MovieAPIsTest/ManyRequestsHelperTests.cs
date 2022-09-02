@@ -52,7 +52,7 @@ namespace MovieAPIsTest
                 Assert.AreEqual(expectedCount, count);
             });
             Assert.That(time, Is.GreaterThan(TimeSpan.FromSeconds(3))); // expectedCount(13) / requestCountInSecond(5) = min operating time(3)
-            Assert.That(time, Is.LessThan(TimeSpan.FromSeconds(3.2)));
+            Assert.That(time, Is.LessThan(TimeSpan.FromSeconds(3.4)));
         }
 
         [Test]
