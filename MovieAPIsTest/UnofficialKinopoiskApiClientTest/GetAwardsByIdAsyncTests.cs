@@ -68,14 +68,11 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetAwardsByIdAsync(-1));
             Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.NotFound]);
         }
-        
-        [TestCase(150)]
-        [TestCase(200)]
-        [TestCase(500)]
-        [TestCase(750)]
-        [TestCase(1000)]
-        [TestCase(2000)]
-        public async Task CancellationTokenTests_CompareRunningTime_SuccessfulTaskAbort(int runningTime)
+
+        [TestCase(100, 50)]
+        [TestCase(400, 200)]
+        [TestCase(1000, 500)]
+        public async Task CancellationTokenTests_CompareRunningTime_SuccessfulTaskAbort(int runningMilliseconds, int millisecondsDelay)
         {
             var response = new HttpResponseMessage()
             {
@@ -84,31 +81,32 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             
             var cSource = new CancellationTokenSource();
 
-            var time1 = await MovieApiTestHelper.GetWorkTime(async () =>
+            IHttpClient httpClient = Mock.Of<IHttpClient>(x =>
+                    x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(runningMilliseconds), response, cSource.Token));
+            UnofficialKinopoiskApiClient client = new UnofficialKinopoiskApiClient(httpClient);
+
+            var timeTask1 = MovieApiTestHelper.GetWorkTime(async () =>
             {
-                var httpClient = Mock.Of<IHttpClient>(x =>
-                    x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(runningTime), response, cSource.Token));
-                var client = new UnofficialKinopoiskApiClient(httpClient);
                 await client.GetAwardsByIdAsync(420923, cSource.Token);
             });
-            
-            var time2 = await MovieApiTestHelper.GetWorkTime(async () =>
+
+            httpClient = Mock.Of<IHttpClient>(x =>
+                        x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(runningMilliseconds), response, cSource.Token));
+            client = new UnofficialKinopoiskApiClient(httpClient);
+
+            var timeTask2 = MovieApiTestHelper.GetWorkTime(async () =>
             {
-                try
-                {
-                    var httpClient = Mock.Of<IHttpClient>(x =>
-                        x.GetAsync(It.IsAny<string>(), cSource.Token) == MovieApiTestHelper.GetHttpMessageAsync(TimeSpan.FromMilliseconds(runningTime), response, cSource.Token));
-                    var client = new UnofficialKinopoiskApiClient(httpClient);
                     var task = client.GetAwardsByIdAsync(420925, cSource.Token);
-                    cSource.CancelAfter(runningTime / 2);
-                    var filmsResponse = await task;
-                }
-                catch (OperationCanceledException) {}
+                    cSource.CancelAfter(millisecondsDelay);
+                    await task;
             });
 
-            var cancelTime = Math.Abs(Math.Abs(time1.TotalMilliseconds - time2.TotalMilliseconds) - (runningTime - runningTime / 2));
-            Assert.IsTrue(time1 > time2);
-            Assert.IsTrue(cancelTime < 150);  
+            var time1 = await timeTask1;
+            var time2 = await timeTask2;
+            var cancelTime = time2 - TimeSpan.FromMilliseconds(millisecondsDelay);
+            var maxCancelTime = TimeSpan.FromMilliseconds(150);
+            Assert.That(time1, Is.GreaterThan(time2));
+            Assert.That(cancelTime, Is.LessThan(maxCancelTime));
         }
     }
 }

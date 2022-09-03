@@ -17,7 +17,11 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
         internal static async Task<TimeSpan> GetWorkTime(Func<Task> toTime)
         {
             var timer = Stopwatch.StartNew();
-            await toTime();
+            try
+            {
+                await toTime();
+            }
+            catch (OperationCanceledException) { }
             timer.Stop();
             return timer.Elapsed;
         }
