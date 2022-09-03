@@ -20,15 +20,16 @@ namespace MovieAPIs
             this.httpClient = httpClient;
             manyRequestsHelper = new ManyRequestsHelper(httpClient, serializer);
         }
-        protected async Task<T> GetResponseDataAsync<T>(string path, CancellationToken ct, Dictionary<string, string>? queryParams = null)
+        protected async Task<T> GetResponseDataAsync<T>(string path, CancellationToken ct = default, Dictionary<string, string>? queryParams = null)
         {
             string url = UrlHelper.GetUrl(path, queryParams);
+            ct.ThrowIfCancellationRequested();
             HttpResponseMessage response = await httpClient.GetAsync(url, ct).ConfigureAwait(false);
             string json = await response.ReadAsStringContentOrThrowExceptionAsync(ct).ConfigureAwait(false);
             return serializer.Deserialize<T>(json);
         }
 
-        protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage, [EnumeratorCancellation] CancellationToken ct)
+        protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage, [EnumeratorCancellation] CancellationToken ct = default)
         {
             await foreach (var data in manyRequestsHelper.GetDataAsync<T>(queryParams, requestCountInSecond, path, fromPage, toPage, ct).ConfigureAwait(false))
             {

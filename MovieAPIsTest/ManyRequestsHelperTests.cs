@@ -17,7 +17,6 @@ namespace MovieAPIsTest
     {
         ISerializer serializer;
         Dictionary<string, string> queryParams;
-        HttpResponseMessage response;
 
         [OneTimeSetUp]
         public void Setup()
@@ -26,10 +25,6 @@ namespace MovieAPIsTest
             queryParams = new Dictionary<string, string>
             {
                 ["type"] = Tops.TOP_250_BEST_FILMS.ToString()
-            };
-            response = new HttpResponseMessage()
-            {
-                StatusCode = HttpStatusCode.Accepted
             };
         }
         

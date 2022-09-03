@@ -28,6 +28,7 @@ namespace MovieAPIs.Utils
             
             await foreach (var response in GetResponsesAsync(urls, requestCountInSecond, ct).ConfigureAwait(false))
             {
+                ct.ThrowIfCancellationRequested();
                 var responseBody = await response.ReadAsStringContentOrThrowExceptionAsync(ct).ConfigureAwait(false);
                 var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<T>>(responseBody);
                 foreach (var item in filmsResponse.Films)
@@ -49,6 +50,7 @@ namespace MovieAPIs.Utils
                 await Task.WhenAll(tasksAndTimer).ConfigureAwait(false);
                 foreach (var task in tasks)
                 {
+                    ct.ThrowIfCancellationRequested();
                     yield return await task.ConfigureAwait(false);
                 }
                 index += requestCountInSecond;
