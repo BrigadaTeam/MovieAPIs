@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MovieAPIs.Utils
 {
     public interface IHttpClient
     {
-        Task<HttpResponseMessage> GetAsync(string requestUrl);
+        Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct = default);
     }
 
     internal class InternalHttpClient : IHttpClient
@@ -23,9 +20,9 @@ namespace MovieAPIs.Utils
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
         }
-        public async Task<HttpResponseMessage> GetAsync(string requestUrl)
+        public async Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct = default)
         {
-            return await client.GetAsync(requestUrl).ConfigureAwait(false);
+            return await client.GetAsync(requestUrl, ct).ConfigureAwait(false);
         }
     }
 }

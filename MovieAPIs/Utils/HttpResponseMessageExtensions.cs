@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MovieAPIs.Utils
 {
     internal static class HttpResponseMessageExtensions
     {
-        internal async static Task<string> ReadAsStringContentOrThrowExceptionAsync(this HttpResponseMessage response)
+        internal static async Task<string> ReadAsStringContentOrThrowExceptionAsync(this HttpResponseMessage response, CancellationToken ct)
         {
             if (!response.IsSuccessStatusCode)
                 HttpInvalidCodeHandler.ThrowException(response.StatusCode);
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
         }
     }
 }

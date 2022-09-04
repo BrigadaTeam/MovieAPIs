@@ -2,14 +2,14 @@
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using MovieAPIs.Utils;
 using System.Net.Http;
 using System.Net;
+using System.Threading;
 using MovieAPIs.Models;
+using MovieAPIsTest.UnofficialKinopoiskApiClientTest;
 
 namespace MovieAPIsTest
 {
@@ -28,16 +28,16 @@ namespace MovieAPIsTest
             };
         }
         
-        [Test]
+         [Test]
         public async Task QuickResponses()
         {
             var time = await Time(async () =>
             {
-                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>()) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(100)));
+                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(100)));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount);
+                var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
                 int count = 0;
                 await foreach(var dataFromPage in dataFromAllPages)
                 {
@@ -47,7 +47,7 @@ namespace MovieAPIsTest
                 Assert.AreEqual(expectedCount, count);
             });
             Assert.That(time, Is.GreaterThan(TimeSpan.FromSeconds(3))); // expectedCount(13) / requestCountInSecond(5) = min operating time(3)
-            Assert.That(time, Is.LessThan(TimeSpan.FromSeconds(3.2)));
+            Assert.That(time, Is.LessThan(TimeSpan.FromSeconds(3.4)));
         }
 
         [Test]
@@ -55,11 +55,11 @@ namespace MovieAPIsTest
         {
             var time = await Time(async () =>
             {
-                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>()) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200)));
+                IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200)));
                 var manyRequests = new ManyRequestsHelper(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
-                var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount);
+                var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
                 int count = 0;
                 await foreach (var dataFromPage in dataFromAllPages)
                 {
