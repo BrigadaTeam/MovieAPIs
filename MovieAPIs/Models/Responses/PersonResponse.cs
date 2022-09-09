@@ -18,7 +18,7 @@
         public int HasAwards { get; set; }
         public string[] Facts { get; set; }
         public Spouse[] Spouses { get; set; }
-        public FilmPersonInfo[] Films { get; set; }
+        public FilmPersonInfoById[] Films { get; set; }
     }
 }
 
