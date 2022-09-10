@@ -3,14 +3,21 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
-using MovieAPIs;
-using MovieAPIs.Utils;
+using MovieAPIs.Common.Http;
+using MovieAPIs.UnofficialKinopoiskApi;
+using MovieAPIs.UnofficialKinopoiskApi.Http;
 using NUnit.Framework;
 
 namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
 {
     public class GetTrailersAndTeasersByIdAsyncTests
     {
+        UnofficialKinopoiskHttpInvalidCodeHandler httpInvalidCodeHandler;
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            httpInvalidCodeHandler = new UnofficialKinopoiskHttpInvalidCodeHandler();
+        }
         [Test]
         public void GetTrailersAndTeasersByIdAsync_ExistingId_CorrectResult()
         {
@@ -23,7 +30,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var trailersAndTeasersByIdAsync = client.GetTrailersAndTeasersByIdAsync(5656).Result;
-            Assert.IsTrue(trailersAndTeasersByIdAsync.Films[0].Name == "Тизер" && trailersAndTeasersByIdAsync.Films[0].Site == "KINOPOISK_WIDGET");
+            Assert.IsTrue(trailersAndTeasersByIdAsync.Items[0].Name == "Тизер" && trailersAndTeasersByIdAsync.Items[0].Site == "KINOPOISK_WIDGET");
         }
 
         [Test]
@@ -38,7 +45,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var exception = Assert.ThrowsAsync<HttpRequestException>(() =>  
                 client.GetTrailersAndTeasersByIdAsync(9999999));
-            Assert.IsTrue(exception! == HttpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest]);
+            Assert.IsTrue(exception!.Message == httpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest].Message);
         }
 
         [Test]
@@ -52,7 +59,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetTrailersAndTeasersByIdAsync(999));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.Unauthorized]);
+            Assert.True(ex!.Message == httpInvalidCodeHandler.Errors[HttpStatusCode.Unauthorized].Message);
         }
 
         [Test]
@@ -66,7 +73,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetTrailersAndTeasersByIdAsync(-1));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.NotFound]);
+            Assert.True(ex!.Message == httpInvalidCodeHandler.Errors[HttpStatusCode.NotFound].Message);
         }
     }
 }
