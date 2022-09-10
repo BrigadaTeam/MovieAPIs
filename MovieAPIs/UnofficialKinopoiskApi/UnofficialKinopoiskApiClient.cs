@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MovieAPIs.Common;
 using MovieAPIs.Common.Http;
@@ -21,14 +22,14 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         {
             constants = UnofficialKinopoiskConstants.GetUnofficialKinopoiskConstants(new NewtonsoftJsonSerializer());
         }
-        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Range pageRange, Tops topType = Tops.TOP_250_BEST_FILMS, CancellationToken ct = default)
+        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Range pageRange, Tops topType = Tops.TOP_250_BEST_FILMS, [EnumeratorCancellation] CancellationToken ct = default)
         {
             await foreach (var filmSearch in GetTopFilmsFromPageRangeAsync(pageRange.Start.Value, pageRange.End.Value, topType, ct).ConfigureAwait(false))
             {
                 yield return filmSearch;
             }
         }
-        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS, CancellationToken ct = default)
+        public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS, [EnumeratorCancellation] CancellationToken ct = default)
         {  
             fromPage = fromPage == -1 ? constants.NumberFirstPage : fromPage;
             toPage = toPage == -1 ? await GetPagesCountAsync(GetTopFilmsAsync(topType, ct: ct)).ConfigureAwait(false) : toPage;

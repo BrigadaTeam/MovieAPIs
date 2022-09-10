@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
-using MovieAPIs;
 using MovieAPIs.Common.Http;
 using MovieAPIs.UnofficialKinopoiskApi;
 using MovieAPIs.UnofficialKinopoiskApi.Http;
