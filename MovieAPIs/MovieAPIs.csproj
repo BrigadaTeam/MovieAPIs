@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Configuration\configuration.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="UnofficialKinopoiskApi\Configuration\UnofficialKinopoiskConfiguration.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

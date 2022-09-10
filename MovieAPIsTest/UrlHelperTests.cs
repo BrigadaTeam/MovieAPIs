@@ -1,7 +1,7 @@
 using NUnit.Framework;
-using MovieAPIs.Utils;
 using System.Collections.Generic;
 using System;
+using MovieAPIs.Common.Helper;
 
 namespace MovieAPIsTest
 {

@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using MovieAPIs.Utils;
 using System.Net.Http;
 using System.Net;
 using System.Threading;
-using MovieAPIs.Models;
-using MovieAPIsTest.UnofficialKinopoiskApiClientTest;
+using MovieAPIs.Common.Http;
+using MovieAPIs.Common.Serialization;
+using MovieAPIs.UnofficialKinopoiskApi.Models;
 
 namespace MovieAPIsTest
 {
@@ -34,7 +34,7 @@ namespace MovieAPIsTest
             var time = await Time(async () =>
             {
                 IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(100)));
-                var manyRequests = new ManyRequestsHelper(httpClient, serializer);
+                var manyRequests = new ManyRequestsSender(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
                 var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
@@ -56,7 +56,7 @@ namespace MovieAPIsTest
             var time = await Time(async () =>
             {
                 IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200)));
-                var manyRequests = new ManyRequestsHelper(httpClient, serializer);
+                var manyRequests = new ManyRequestsSender(httpClient, serializer);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
                 var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
