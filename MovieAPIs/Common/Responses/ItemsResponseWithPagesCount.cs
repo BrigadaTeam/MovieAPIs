@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace MovieAPIs.UnofficialKinopoiskApi.Models
+namespace MovieAPIs.Common.Responses
 {
-    public class FilmsResponseWithPagesCount<T> : FilmsResponse<T>
+    public class ItemsResponseWithPagesCount<T> : ItemsResponse<T>
     {
         [JsonProperty("pagesCount")]
         public int PagesCount { get; set; }

@@ -10,6 +10,7 @@ using System.Threading;
 using MovieAPIs.Common.Http;
 using MovieAPIs.Common.Serialization;
 using MovieAPIs.UnofficialKinopoiskApi.Models;
+using MovieAPIs.UnofficialKinopoiskApi.Http;
 
 namespace MovieAPIsTest
 {
@@ -17,6 +18,7 @@ namespace MovieAPIsTest
     {
         ISerializer serializer;
         Dictionary<string, string> queryParams;
+        UnofficialKinopoiskHttpInvalidCodeHandler httpInvalidCodeHandler;
 
         [OneTimeSetUp]
         public void Setup()
@@ -26,6 +28,7 @@ namespace MovieAPIsTest
             {
                 ["type"] = Tops.TOP_250_BEST_FILMS.ToString()
             };
+            httpInvalidCodeHandler = new UnofficialKinopoiskHttpInvalidCodeHandler();
         }
         
          [Test]
@@ -34,7 +37,7 @@ namespace MovieAPIsTest
             var time = await Time(async () =>
             {
                 IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(100)));
-                var manyRequests = new ManyRequestsSender(httpClient, serializer);
+                var manyRequests = new ManyRequestsSender(httpClient, serializer, httpInvalidCodeHandler);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
                 var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);
@@ -56,7 +59,7 @@ namespace MovieAPIsTest
             var time = await Time(async () =>
             {
                 IHttpClient httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(It.IsAny<string>(), CancellationToken.None) == GetHttpMessageAsync(TimeSpan.FromMilliseconds(1200)));
-                var manyRequests = new ManyRequestsSender(httpClient, serializer);
+                var manyRequests = new ManyRequestsSender(httpClient, serializer, httpInvalidCodeHandler);
                 int expectedCount = 13;
                 int requestCountInSecond = 5;
                 var dataFromAllPages = manyRequests.GetDataAsync<Nomination>(queryParams, requestCountInSecond, "testUrl", 1, expectedCount, CancellationToken.None);

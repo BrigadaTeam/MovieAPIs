@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MovieAPIs.UnofficialKinopoiskApi.Http
 {
-    internal class InternalHttpClient : IHttpClient
+    internal class UnofficialKinopoiskHttpClient : IHttpClient
     {
         HttpClient client;
-        public InternalHttpClient(string apiKey)
+        public UnofficialKinopoiskHttpClient(string apiKey)
         {
             client = new HttpClient();
             client.DefaultRequestHeaders.Clear();

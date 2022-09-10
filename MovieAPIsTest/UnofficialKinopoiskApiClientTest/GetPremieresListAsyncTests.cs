@@ -6,6 +6,7 @@ using Moq;
 using MovieAPIs;
 using MovieAPIs.Common.Http;
 using MovieAPIs.UnofficialKinopoiskApi;
+using MovieAPIs.UnofficialKinopoiskApi.Http;
 using MovieAPIs.UnofficialKinopoiskApi.Models;
 using NUnit.Framework;
 
@@ -13,6 +14,12 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
 {
     public class GetPremieresListAsyncTests
     {
+        UnofficialKinopoiskHttpInvalidCodeHandler httpInvalidCodeHandler;
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            httpInvalidCodeHandler = new UnofficialKinopoiskHttpInvalidCodeHandler();
+        }
         [Test]
         public void GetPremieresListAsync_CorrectParam_CorrectResult()
         {
@@ -25,7 +32,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var premieresListAsync = client.GetPremieresListAsync(2019, Months.JULY).Result;
-            Assert.IsTrue(premieresListAsync.Films[0].KinopoiskId == 1043758 && premieresListAsync.Films[0].NameRu == "Паразиты");
+            Assert.IsTrue(premieresListAsync.Items[0].KinopoiskId == 1043758 && premieresListAsync.Items[0].NameRu == "Паразиты");
         }
 
         [Test]
@@ -40,7 +47,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var premieresListAsync = client.GetPremieresListAsync(5000, Months.JULY).Result;
-            Assert.IsTrue(premieresListAsync.Films.Length == 0);
+            Assert.IsTrue(premieresListAsync.Items.Length == 0);
         }
         
         [Test]
@@ -55,7 +62,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var premieresListAsync = client.GetPremieresListAsync(-5000, Months.JULY).Result;
-            Assert.IsTrue(premieresListAsync.Films.Length == 0);
+            Assert.IsTrue(premieresListAsync.Items.Length == 0);
         }
         
         [Test]
@@ -69,7 +76,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetPremieresListAsync(2020, Months.JULY));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.Unauthorized]);
+            Assert.True(ex!.Message == httpInvalidCodeHandler.Errors[HttpStatusCode.Unauthorized].Message);
         }
 
         [Test]
@@ -83,7 +90,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetPremieresListAsync(2020, (Months)959));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest]);
+            Assert.True(ex!.Message == httpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest].Message);
         }
     }
 }

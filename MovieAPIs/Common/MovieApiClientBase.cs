@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MovieAPIs.Common.Serialization;
 using MovieAPIs.Common.Helper;
 using MovieAPIs.Common.Http;
-using MovieAPIs.UnofficialKinopoiskApi.Models;
+using MovieAPIs.Common.Responses;
 
 namespace MovieAPIs.Common
 {
@@ -15,19 +15,23 @@ namespace MovieAPIs.Common
         readonly IHttpClient httpClient;
         readonly ISerializer serializer;
         readonly IManyRequestsSender manyRequestsHelper;
+        readonly HttpInvalidCodeHandler httpInvalidCodeHandler;
 
-        public MovieApiClientBase(IHttpClient httpClient)
+        internal MovieApiClientBase(IHttpClient httpClient, HttpInvalidCodeHandler httpInvalidCodeHandler)
         {
             serializer = new NewtonsoftJsonSerializer();
             this.httpClient = httpClient;
-            manyRequestsHelper = new ManyRequestsSender(httpClient, serializer);
+            manyRequestsHelper = new ManyRequestsSender(httpClient, serializer, httpInvalidCodeHandler);
+            this.httpInvalidCodeHandler = httpInvalidCodeHandler;
         }
         protected async Task<T> GetResponseDataAsync<T>(string path, CancellationToken ct = default, Dictionary<string, string>? queryParams = null)
         {
             string url = UrlHelper.GetUrl(path, queryParams);
             ct.ThrowIfCancellationRequested();
             HttpResponseMessage response = await httpClient.GetAsync(url, ct).ConfigureAwait(false);
-            string json = await response.ReadAsStringContentOrThrowExceptionAsync(ct).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode)
+                httpInvalidCodeHandler.ThrowException(response.StatusCode);
+            var json = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
             return serializer.Deserialize<T>(json);
         }
 
@@ -39,7 +43,7 @@ namespace MovieAPIs.Common
             }
         }
 
-        protected async Task<int> GetPagesCountAsync<T>(Task<FilmsResponseWithPagesCount<T>> response)
+        protected async Task<int> GetPagesCountAsync<T>(Task<ItemsResponseWithPagesCount<T>> response)
         {
             return (await response.ConfigureAwait(false)).PagesCount;
         }

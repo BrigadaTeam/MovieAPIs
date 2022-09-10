@@ -1,6 +1,6 @@
 ﻿using MovieAPIs.Common.Helper;
+using MovieAPIs.Common.Responses;
 using MovieAPIs.Common.Serialization;
-using MovieAPIs.UnofficialKinopoiskApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +19,12 @@ namespace MovieAPIs.Common.Http
     {
         readonly IHttpClient httpClient;
         readonly ISerializer serializer;
-        internal ManyRequestsSender(IHttpClient httpClient, ISerializer serializer)
+        readonly HttpInvalidCodeHandler httpInvalidCodeHandler;
+        internal ManyRequestsSender(IHttpClient httpClient, ISerializer serializer, HttpInvalidCodeHandler httpInvalidCodeHandler)
         {
             this.httpClient = httpClient;
             this.serializer = serializer;
+            this.httpInvalidCodeHandler = httpInvalidCodeHandler;
         }
         public async IAsyncEnumerable<T> GetDataAsync<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage, [EnumeratorCancellation] CancellationToken ct)
         {
@@ -31,9 +33,11 @@ namespace MovieAPIs.Common.Http
             await foreach (var response in GetResponsesAsync(urls, requestCountInSecond, ct).ConfigureAwait(false))
             {
                 ct.ThrowIfCancellationRequested();
-                var responseBody = await response.ReadAsStringContentOrThrowExceptionAsync(ct).ConfigureAwait(false);
-                var filmsResponse = serializer.Deserialize<FilmsResponseWithPagesCount<T>>(responseBody);
-                foreach (var item in filmsResponse.Films)
+                if (!response.IsSuccessStatusCode)
+                    httpInvalidCodeHandler.ThrowException(response.StatusCode);
+                var responseBody = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+                var filmsResponse = serializer.Deserialize<ItemsResponseWithPagesCount<T>>(responseBody);
+                foreach (var item in filmsResponse.Items)
                 {
                     yield return item;
                 }

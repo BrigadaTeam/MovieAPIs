@@ -1,6 +1,6 @@
 ﻿namespace MovieAPIs.UnofficialKinopoiskApi.Models
 {
-    public class PersonResponse
+    public class Person
     {
         public int? PersonId { get; set; }
         public string WebUrl { get; set; }

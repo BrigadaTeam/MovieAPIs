@@ -2,7 +2,7 @@
 
 namespace MovieAPIs.UnofficialKinopoiskApi.Models
 {
-    public class ViewerReviewsResponse
+    public class ViewerReviews
     {
         public int TotalPages { get; set; }
         public int TotalPositiveReviews { get; set; }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Moq;
 using MovieAPIs.Common.Http;
 using MovieAPIs.UnofficialKinopoiskApi;
+using MovieAPIs.UnofficialKinopoiskApi.Http;
 using MovieAPIs.UnofficialKinopoiskApi.Models;
 using NUnit.Framework;
 
@@ -12,6 +13,12 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
 {
     public class GetImagesByIdAsyncTests
     {
+        UnofficialKinopoiskHttpInvalidCodeHandler httpInvalidCodeHandler;
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            httpInvalidCodeHandler = new UnofficialKinopoiskHttpInvalidCodeHandler();
+        }
         [Test]
         public void GetImagesByIdAsync_ExistingId_CorrectResult()
         {
@@ -28,7 +35,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var imagesByIdAsync = client.GetImagesByIdAsync(665).Result;
-            Assert.IsTrue(imagesByIdAsync.Films[0].ImageUrl == imUrl && imagesByIdAsync.Films[0].PreviewUrl == prUrl);
+            Assert.IsTrue(imagesByIdAsync.Items[0].ImageUrl == imUrl && imagesByIdAsync.Items[0].PreviewUrl == prUrl);
         }
         
         [Test]
@@ -47,7 +54,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var imagesByIdAsync = client.GetImagesByIdAsync(665, type: ImageType.POSTER).Result;
-            Assert.IsTrue(imagesByIdAsync.Films[0].ImageUrl == imUrl && imagesByIdAsync.Films[0].PreviewUrl == prUrl);
+            Assert.IsTrue(imagesByIdAsync.Items[0].ImageUrl == imUrl && imagesByIdAsync.Items[0].PreviewUrl == prUrl);
         }
         
         [Test]
@@ -61,7 +68,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetImagesByIdAsync(99999999));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest]);
+            Assert.AreEqual(httpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest].Message, ex!.Message);
         }
         
         [Test]
@@ -76,7 +83,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => 
                 client.GetImagesByIdAsync(999));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.Unauthorized]);
+            Assert.AreEqual(httpInvalidCodeHandler.Errors[HttpStatusCode.Unauthorized].Message, ex!.Message);
         }
         
         [Test]
@@ -90,7 +97,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var httpClient = Mock.Of<IHttpClient>(x => x.GetAsync(url, It.IsAny<CancellationToken>()) == Task.FromResult(response));
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => client.GetImagesByIdAsync(-1));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.NotFound]);
+            Assert.AreEqual(httpInvalidCodeHandler.Errors[HttpStatusCode.NotFound].Message, ex!.Message);
         }
         
         [Test]
@@ -105,7 +112,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => 
                 client.GetImagesByIdAsync(999, type: (ImageType)999));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest]);
+            Assert.AreEqual(httpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest].Message, ex!.Message);
         }
         
         [Test]
@@ -120,7 +127,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => 
                 client.GetImagesByIdAsync(665, page: -1));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest]);
+            Assert.AreEqual(httpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest].Message, ex!.Message);
         }
         
         [Test]
@@ -135,7 +142,7 @@ namespace MovieAPIsTest.UnofficialKinopoiskApiClientTest
             var client = new UnofficialKinopoiskApiClient(httpClient);
             var ex = Assert.ThrowsAsync<HttpRequestException>(() => 
                 client.GetImagesByIdAsync(665, page: 100));
-            Assert.True(ex! == HttpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest]);
+            Assert.AreEqual(httpInvalidCodeHandler.Errors[HttpStatusCode.BadRequest].Message, ex!.Message);
         }
     }
 }
