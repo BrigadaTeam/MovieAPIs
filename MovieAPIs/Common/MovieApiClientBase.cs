@@ -35,17 +35,14 @@ namespace MovieAPIs.Common
             return serializer.Deserialize<T>(json);
         }
 
-        protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage, [EnumeratorCancellation] CancellationToken ct = default)
+        protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage, int firstPage, ItemsResponseWithPagesCount<T> response, [EnumeratorCancellation] CancellationToken ct = default)
         {
+            fromPage = fromPage == -1 ? firstPage : fromPage;
+            toPage = toPage == -1 ? response.PagesCount : toPage;
             await foreach (var data in manyRequestsHelper.GetDataAsync<T>(queryParams, requestCountInSecond, path, fromPage, toPage, ct).ConfigureAwait(false))
             {
                 yield return data;
             }
-        }
-
-        protected async Task<int> GetPagesCountAsync<T>(Task<ItemsResponseWithPagesCount<T>> response)
-        {
-            return (await response.ConfigureAwait(false)).PagesCount;
         }
     }
 }

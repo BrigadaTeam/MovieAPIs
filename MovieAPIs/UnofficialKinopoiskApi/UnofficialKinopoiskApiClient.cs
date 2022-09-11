@@ -22,6 +22,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         {
             constants = UnofficialKinopoiskConstants.GetUnofficialKinopoiskConstants(new NewtonsoftJsonSerializer());
         }
+
+        #region Method for returning data from range page with range parameter.
         public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Range pageRange, Tops topType = Tops.TOP_250_BEST_FILMS, [EnumeratorCancellation] CancellationToken ct = default)
         {
             await foreach (var filmSearch in GetTopFilmsFromPageRangeAsync(pageRange.Start.Value, pageRange.End.Value, topType, ct).ConfigureAwait(false))
@@ -29,48 +31,110 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 yield return filmSearch;
             }
         }
+
+        public async IAsyncEnumerable<FilmRelease> GetDigitalReleasesFromPageRangeAsync(int year, Months month, Range pageRange, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            await foreach (var filmRelease in GetDigitalReleasesFromPageRangeAsync(year, month, pageRange.Start.Value, pageRange.End.Value, ct).ConfigureAwait(false))
+            {
+                yield return filmRelease;
+            }
+        }
+
+        public async IAsyncEnumerable<FilmSearch> GetFilmsByKeywordFromPageRangeAsync(string keyword, Range pageRange, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            await foreach (var filmSearch in GetFilmsByKeywordFromPageRangeAsync(keyword, pageRange.Start.Value, pageRange.End.Value, ct).ConfigureAwait(false))
+            {
+                yield return filmSearch;
+            }
+        }
+
+        public async IAsyncEnumerable<Film> GetFilmsByFiltersFromPageRangeAsync(Range pageRange, int countryId = (int)Filter.ALL,
+            int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
+            MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
+            int yearFrom = 1000, int yearTo = 3000, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            await foreach (var film in GetFilmsByFiltersFromPageRangeAsync(countryId, genreId, imdbId, keyword, order, type, ratingFrom, ratingTo, yearFrom, yearTo,
+                pageRange.Start.Value, pageRange.End.Value, ct).ConfigureAwait(false))
+            {
+                yield return film;
+            }
+        }
+
+        public async IAsyncEnumerable<Review> GetViewerReviewsByIdFromPageRangeAsync(int id, Range pageRange,
+            ReviewOrder order = ReviewOrder.DATE_DESC, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            await foreach (var review in GetViewerReviewsByIdFromPageRangeAsync(id, pageRange.Start.Value, pageRange.End.Value, order, ct).ConfigureAwait(false))
+            {
+                yield return review;
+            }
+        }
+
+        public async IAsyncEnumerable<Image> GetImagesByIdFromPageRangeAsync(int id, Range pageRange,
+            ImageType type = ImageType.STILL, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            await foreach (var image in GetImagesByIdFromPageRangeAsync(id, type, pageRange.Start.Value, pageRange.End.Value, ct).ConfigureAwait(false))
+            {
+                yield return image;
+            }
+        }
+
+        public async IAsyncEnumerable<FilmPersonInfo> GetPersonByNameFromPageRangeAsync(string name, Range pageRange, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            await foreach (var filmPersonInfo in GetPersonByNameFromPageRangeAsync(name, pageRange.Start.Value, pageRange.End.Value, ct).ConfigureAwait(false))
+            {
+                yield return filmPersonInfo;
+            }
+        }
+        #endregion
+
+        #region Method for returning data from range page without range parameter.
         public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS, [EnumeratorCancellation] CancellationToken ct = default)
         {  
-            fromPage = fromPage == -1 ? constants.NumberFirstPage : fromPage;
-            toPage = toPage == -1 ? await GetPagesCountAsync(GetTopFilmsAsync(topType, ct: ct)).ConfigureAwait(false) : toPage;
             var queryParams = new Dictionary<string, string>
             {
                 ["type"] = topType.ToString()
             };
             string path = $"{constants.TopUrlV22}";
-            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, 5, fromPage, toPage, ct).ConfigureAwait(false))
+            var response = await GetTopFilmsAsync(topType, ct: ct).ConfigureAwait(false);
+            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync(path, queryParams, 5, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
             {
                 yield return filmSearch;
             }
         }
-        
-        public async Task<Film> GetFilmByIdAsync(int id, CancellationToken ct = default)
+
+        public async IAsyncEnumerable<FilmRelease> GetDigitalReleasesFromPageRangeAsync(int year, Months month, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}";
-            return await GetResponseDataAsync<Film>(path, ct).ConfigureAwait(false);
+            var queryParams = new Dictionary<string, string>
+            {
+                ["year"] = year.ToString(),
+                ["month"] = month.ToString()
+            };
+            string path = $"{constants.ReleasesUrlV21}";
+            var response = await GetDigitalReleasesAsync(year, month, ct: ct).ConfigureAwait(false);
+            await foreach (var filmRelease in GetResponsesDataFromPageRangeAsync(path, queryParams, 5, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            {
+                yield return filmRelease;
+            }
         }
 
-        public async Task<ItemsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1, CancellationToken ct = default)
+        public async IAsyncEnumerable<FilmSearch> GetFilmsByKeywordFromPageRangeAsync(string keyword, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
         {
             string path = $"{constants.SearchByKeywordUrlV21}";
             var queryParams = new Dictionary<string, string>
             {
-                ["keyword"] = keyword,
-                ["page"] = page.ToString()
+                ["keyword"] = keyword
             };
-            return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmSearch>>(path, ct, queryParams).ConfigureAwait(false);
+            var response = await GetFilmsByKeywordAsync(keyword, ct: ct).ConfigureAwait(false);
+            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync(path, queryParams, 5, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            {
+                yield return filmSearch;
+            }
         }
 
-        public async Task<GenresAndCountries> GetGenresAndCountriesAsync(CancellationToken ct = default)
-        {
-            string path = $"{constants.FiltersUrlV22}";
-            return await GetResponseDataAsync<GenresAndCountries>(path, ct).ConfigureAwait(false);
-        }
-
-        public async Task<ItemsResponseWithPagesCount<Film>> GetFilmsByFiltersAsync(int countryId = (int)Filter.ALL,
+        public async IAsyncEnumerable<Film> GetFilmsByFiltersFromPageRangeAsync(int countryId = (int)Filter.ALL,
             int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
             MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
-            int yearFrom = 1000, int yearTo = 3000, int page = 1, CancellationToken ct = default)
+            int yearFrom = 1000, int yearTo = 3000, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
         {
             var queryParams = new Dictionary<string, string>
             {
@@ -83,28 +147,79 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["yearFrom"] = yearFrom.ToString(),
                 ["yearTo"] = yearTo.ToString(),
                 ["imdbId"] = imdbId,
-                ["keyword"] = keyword,
-                ["page"] = page.ToString()
+                ["keyword"] = keyword
             };
             string path = $"{constants.FiltersUrlV22}";
-            return await GetResponseDataAsync<ItemsResponseWithPagesCount<Film>>(path, ct, queryParams).ConfigureAwait(false);
+            var response = await GetFilmsByFiltersAsync(countryId: countryId, genreId: genreId, imdbId: imdbId, keyword: keyword, order: order,
+                type: type, ratingFrom: ratingFrom, ratingTo: ratingTo, yearFrom: yearFrom, yearTo: yearTo, ct: ct).ConfigureAwait(false);
+            await foreach (var film in GetResponsesDataFromPageRangeAsync(path, queryParams, 5, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            {
+                yield return film;
+            }
+        }
+
+        public async IAsyncEnumerable<Review> GetViewerReviewsByIdFromPageRangeAsync(int id, int fromPage = -1, int toPage = -1,
+            ReviewOrder order = ReviewOrder.DATE_DESC, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["order"] = order.ToString()
+            };
+            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ReviewsPathSegment}";
+            var response = await GetViewerReviewsByIdAsync(id, order: order, ct: ct).ConfigureAwait(false);
+            await foreach (var review in GetResponsesDataFromPageRangeAsync(path, queryParams, 5, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            {
+                yield return review;
+            }
+        }
+
+        public async IAsyncEnumerable<Image> GetImagesByIdFromPageRangeAsync(int id,
+            ImageType type = ImageType.STILL, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["type"] = type.ToString()
+            };
+            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ImagesPathSegment}";
+            var response = await GetImagesByIdAsync(id, type, ct: ct).ConfigureAwait(false);
+            await foreach (var image in GetResponsesDataFromPageRangeAsync(path, queryParams, 5, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            {
+                yield return image;
+            }
+        }
+
+        public async IAsyncEnumerable<FilmPersonInfo> GetPersonByNameFromPageRangeAsync(string name, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["name"] = name
+            };
+            string path = $"{constants.PersonsUrlV1}";
+            var response = await GetPersonByNameAsync(name, ct: ct).ConfigureAwait(false);
+            await foreach (var filmPersonInfo in GetResponsesDataFromPageRangeAsync(path, queryParams, 5, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            {
+                yield return filmPersonInfo;
+            }
+        }
+        #endregion
+
+        #region Method for returning data without page parameter.
+        public async Task<Film> GetFilmByIdAsync(int id, CancellationToken ct = default)
+        {
+            string path = $"{constants.FilmsUrlV22}/{id}";
+            return await GetResponseDataAsync<Film>(path, ct).ConfigureAwait(false);
+        }
+
+        public async Task<GenresAndCountries> GetGenresAndCountriesAsync(CancellationToken ct = default)
+        {
+            string path = $"{constants.FiltersUrlV22}";
+            return await GetResponseDataAsync<GenresAndCountries>(path, ct).ConfigureAwait(false);
         }
 
         public async Task<ItemsResponse<RelatedFilm>> GetRelatedFilmsAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.SimilarsPathSegment}";
             return await GetResponseDataAsync<ItemsResponse<RelatedFilm>>(path, ct).ConfigureAwait(false);
-        }
-
-        public async Task<ItemsResponseWithPagesCount<FilmSearch>> GetTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS, int page = 1, CancellationToken ct = default)
-        {
-            var queryParams = new Dictionary<string, string>
-            {
-                ["type"] = topType.ToString(),
-                ["page"] = page.ToString()
-            };
-            string path = $"{constants.TopUrlV22}";
-            return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmSearch>>(path, ct, queryParams).ConfigureAwait(false);
         }
 
         public async Task<ItemsResponse<FactsAndMistakes>> GetFilmFactsAndMistakesAsync(int id, CancellationToken ct = default)
@@ -119,35 +234,10 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             return await GetResponseDataAsync<ItemsResponse<FilmDistributionsResponseItems>>(path, ct).ConfigureAwait(false);
         }
 
-        public async Task<ItemsResponseWithPagesCount<FilmRelease>> GetDigitalReleasesAsync(int year, Months month, 
-             int page = 1, CancellationToken ct = default)
-        {
-            var queryParams = new Dictionary<string, string>
-            {
-                ["year"] = year.ToString(),
-                ["month"] = month.ToString(),
-                ["page"] = page.ToString()
-            };
-            string path = $"{constants.ReleasesUrlV21}";
-            return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmRelease>>(path, ct, queryParams).ConfigureAwait(false);
-        }
-
         public async Task<FilmSearch[]> GetSequelsAndPrequelsByIdAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV21}/{id}/{constants.SequelsAndPrequelsPathSegment}";
             return await GetResponseDataAsync<FilmSearch[]>(path, ct).ConfigureAwait(false);
-        }
-
-        public async Task<ViewerReviews> GetViewerReviewsByIdAsync(int id, int page = 1,
-            ReviewOrder order = ReviewOrder.DATE_DESC, CancellationToken ct = default)
-        {
-            var queryParams = new Dictionary<string, string>
-            {
-                ["page"] = page.ToString(),
-                ["order"] = order.ToString(),
-            };
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ReviewsPathSegment}";
-            return await GetResponseDataAsync<ViewerReviews>(path, ct, queryParams).ConfigureAwait(false);
         }
 
         public async Task<ItemsResponse<MonetizationInfo>> GetBoxOfficeByIdAsync(int id, CancellationToken ct = default)
@@ -160,18 +250,6 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.SeasonsPathSegment}";
             return await GetResponseDataAsync<ItemsResponse<Season>>(path, ct).ConfigureAwait(false);
-        }
-
-        public async Task<ItemsResponseWithPagesCount<Image>> GetImagesByIdAsync(int id, 
-            ImageType type = ImageType.STILL, int page = 1, CancellationToken ct = default)
-        {
-            var queryParams = new Dictionary<string, string>
-            {
-                ["page"] = page.ToString(),
-                ["type"] = type.ToString(),
-            };
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ImagesPathSegment}";
-            return await GetResponseDataAsync<ItemsResponseWithPagesCount<Image>>(path, ct, queryParams).ConfigureAwait(false);
         }
 
         public async Task<Staff[]> GetStaffByFilmIdAsync(int filmId, CancellationToken ct = default)
@@ -207,7 +285,99 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             return await GetResponseDataAsync<ItemsResponse<Nomination>>(path, ct).ConfigureAwait(false);
         }
 
-        public async Task<ItemsResponse<FilmPersonInfo>> GetPersonByNameAsync(string name, int page = 1, CancellationToken ct = default)
+        public async Task<Person> GetStaffByPersonIdAsync(int personId, CancellationToken ct = default)
+        {
+            string path = $"{constants.StaffUrlV1}/{personId}";
+            return await GetResponseDataAsync<Person>(path, ct).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region Method for returning data from one page with page parameter.
+        public async Task<ItemsResponseWithPagesCount<FilmRelease>> GetDigitalReleasesAsync(int year, Months month,
+             int page = 1, CancellationToken ct = default)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["year"] = year.ToString(),
+                ["month"] = month.ToString(),
+                ["page"] = page.ToString()
+            };
+            string path = $"{constants.ReleasesUrlV21}";
+            return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmRelease>>(path, ct, queryParams).ConfigureAwait(false);
+        }
+
+        public async Task<ItemsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1, CancellationToken ct = default)
+        {
+            string path = $"{constants.SearchByKeywordUrlV21}";
+            var queryParams = new Dictionary<string, string>
+            {
+                ["keyword"] = keyword,
+                ["page"] = page.ToString()
+            };
+            return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmSearch>>(path, ct, queryParams).ConfigureAwait(false);
+        }
+
+        
+        public async Task<ItemsResponseWithPagesCount<Film>> GetFilmsByFiltersAsync(int countryId = (int)Filter.ALL,
+            int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
+            MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
+            int yearFrom = 1000, int yearTo = 3000, int page = 1, CancellationToken ct = default)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["countries"] = countryId == (int)Filter.ALL ? "" : countryId.ToString(),
+                ["genres"] = genreId == (int)Filter.ALL ? "" : genreId.ToString(),
+                ["order"] = order.ToString(),
+                ["type"] = type.ToString(),
+                ["ratingFrom"] = ratingFrom.ToString(),
+                ["ratingTo"] = ratingTo.ToString(),
+                ["yearFrom"] = yearFrom.ToString(),
+                ["yearTo"] = yearTo.ToString(),
+                ["imdbId"] = imdbId,
+                ["keyword"] = keyword,
+                ["page"] = page.ToString()
+            };
+            string path = $"{constants.FiltersUrlV22}";
+            return await GetResponseDataAsync<ItemsResponseWithPagesCount<Film>>(path, ct, queryParams).ConfigureAwait(false);
+        }
+
+        public async Task<ItemsResponseWithPagesCount<FilmSearch>> GetTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS, int page = 1, CancellationToken ct = default)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["type"] = topType.ToString(),
+                ["page"] = page.ToString()
+            };
+            string path = $"{constants.TopUrlV22}";
+            return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmSearch>>(path, ct, queryParams).ConfigureAwait(false);
+        }      
+
+        public async Task<ViewerReviewsResponse<Review>> GetViewerReviewsByIdAsync(int id, int page = 1,
+            ReviewOrder order = ReviewOrder.DATE_DESC, CancellationToken ct = default)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["page"] = page.ToString(),
+                ["order"] = order.ToString(),
+            };
+            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ReviewsPathSegment}";
+            return await GetResponseDataAsync<ViewerReviewsResponse<Review>>(path, ct, queryParams).ConfigureAwait(false);
+        }
+       
+        public async Task<ItemsResponseWithPagesCount<Image>> GetImagesByIdAsync(int id, 
+            ImageType type = ImageType.STILL, int page = 1, CancellationToken ct = default)
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                ["page"] = page.ToString(),
+                ["type"] = type.ToString(),
+            };
+            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ImagesPathSegment}";
+            return await GetResponseDataAsync<ItemsResponseWithPagesCount<Image>>(path, ct, queryParams).ConfigureAwait(false);
+        }
+
+        public async Task<ItemsResponseWithPagesCount<FilmPersonInfo>> GetPersonByNameAsync(string name, int page = 1, CancellationToken ct = default)
         {
             var queryParams = new Dictionary<string, string>
             {
@@ -215,13 +385,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["page"] = page.ToString()
             };
             string path = $"{constants.PersonsUrlV1}";
-            return await GetResponseDataAsync<ItemsResponse<FilmPersonInfo>>(path, ct, queryParams).ConfigureAwait(false);
+            return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmPersonInfo>>(path, ct, queryParams).ConfigureAwait(false);
         }
-
-        public async Task<Person> GetStaffByPersonIdAsync(int personId, CancellationToken ct = default)
-        {
-            string path = $"{constants.StaffUrlV1}/{personId}";
-            return await GetResponseDataAsync<Person>(path, ct).ConfigureAwait(false);
-        }
+        #endregion
     }
 }
