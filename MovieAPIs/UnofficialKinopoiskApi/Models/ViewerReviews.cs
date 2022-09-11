@@ -1,5 +1,4 @@
 ﻿using MovieAPIs.Common.Responses;
-using Newtonsoft.Json;
 
 namespace MovieAPIs.UnofficialKinopoiskApi.Models
 {

@@ -203,7 +203,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         }
         #endregion
 
-        #region Method for returning data from one page without page parameter.
+        #region Method for returning data without page parameter.
         public async Task<Film> GetFilmByIdAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}";
@@ -293,7 +293,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
 
         #endregion
 
-        #region ethod for returning data from one page with page parameter.
+        #region Method for returning data from one page with page parameter.
         public async Task<ItemsResponseWithPagesCount<FilmRelease>> GetDigitalReleasesAsync(int year, Months month,
              int page = 1, CancellationToken ct = default)
         {
