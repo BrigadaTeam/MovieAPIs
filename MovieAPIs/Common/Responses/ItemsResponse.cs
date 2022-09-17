@@ -9,7 +9,7 @@ namespace MovieAPIs.Common.Responses
     public class ItemsResponse<T>
     {
         /// <summary>
-        /// Base array of response elements.
+        /// Array of response elements.
         /// </summary>
         [JsonProperty("items")]
         public T[] Items { get; set; }

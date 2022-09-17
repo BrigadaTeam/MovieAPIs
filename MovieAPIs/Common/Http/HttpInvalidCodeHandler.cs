@@ -5,7 +5,7 @@ using System.Net.Http;
 namespace MovieAPIs.Common.Http
 {
     /// <summary>
-    /// Abstract class for catching exceptions by http status code.
+    /// Catching exceptions by http status code.
     /// </summary>
     internal abstract class HttpInvalidCodeHandler
     {
@@ -18,7 +18,7 @@ namespace MovieAPIs.Common.Http
         /// Check the http status code and throws the corresponding error.
         /// </summary>
         /// <param name="code">Contains the values of status codes defined for HTTP.</param>
-        /// <exception cref="HttpRequestException">Thrown HttpRequestException.</exception>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public void ThrowException(HttpStatusCode code)
         {
             if (Errors.ContainsKey(code))

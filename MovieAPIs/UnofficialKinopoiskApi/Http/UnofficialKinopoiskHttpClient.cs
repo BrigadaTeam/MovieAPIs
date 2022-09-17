@@ -32,7 +32,6 @@ namespace MovieAPIs.UnofficialKinopoiskApi.Http
         /// Send a GET request to the specified Uri with a cancellation token as an asynchronous operation.
         /// </summary>
         /// <param name="requestUrl">Request Url for Unofficial kinopoisk api.</param>
-        /// <param name="ct">Cancellation token</param>
         /// <returns>A task object that represents  a HTTP response message including the status code and data.</returns>
         public async Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct = default)
         {

@@ -11,7 +11,7 @@ namespace MovieAPIs.Common.Helper
     internal static class UrlHelper
     {
         /// <summary>
-        /// Method returning final URL with parameters.
+        /// Get final URL.
         /// </summary>
         /// <param name="path">Contains protocol, host and resource path.</param>
         /// <param name="queryParams">Contains query parameter as a key, and its query value as a value.</param>
@@ -28,7 +28,7 @@ namespace MovieAPIs.Common.Helper
         }
         
         /// <summary>
-        /// Method concatenates URL parameters into one string from separate parameters.
+        /// Concatenates URL parameters into one string from separate parameters.
         /// </summary>
         /// <param name="queryParams">Contains query parameter as a key, and its query value as a value.</param>
         /// <returns>String containing all query parameters.</returns>

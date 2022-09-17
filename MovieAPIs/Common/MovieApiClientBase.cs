@@ -52,10 +52,10 @@ namespace MovieAPIs.Common
         /// Request to api to get data.
         /// </summary>
         /// <param name="path">Contains protocol, host and resource path.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <param name="queryParams">Http request parameters.</param>
         /// <typeparam name="T">Response models.</typeparam>
         /// <returns>A task object with a response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         protected async Task<T> GetResponseDataAsync<T>(string path, CancellationToken ct = default, Dictionary<string, string>? queryParams = null)
         {
             string url = UrlHelper.GetUrl(path, queryParams);
@@ -77,9 +77,9 @@ namespace MovieAPIs.Common
         /// <param name="toPage">End page of the answer response.</param>
         /// <param name="firstPage">First page of the answer response</param>
         /// <param name="response">Response containing the number of pages.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <typeparam name="T">Response models.</typeparam>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of response models.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage, int firstPage, ItemsResponseWithPagesCount<T> response, [EnumeratorCancellation] CancellationToken ct = default)
         {
             fromPage = fromPage == -1 ? firstPage : fromPage;

@@ -71,9 +71,9 @@ namespace MovieAPIs.Common.Http
         /// <param name="path">Contains protocol, host and resource path.</param>
         /// <param name="fromPage">Start page.</param>
         /// <param name="toPage">End page.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <typeparam name="T">The type of the elements in the collection.</typeparam>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<T> GetDataAsync<T>(Dictionary<string, string> queryParams, int requestCountInSecond, string path, int fromPage, int toPage, [EnumeratorCancellation] CancellationToken ct)
         {
             var urls = UrlHelper.GetUrls(queryParams, path, fromPage, toPage);
@@ -97,7 +97,6 @@ namespace MovieAPIs.Common.Http
         /// </summary>
         /// <param name="requestUrls">Multiple Request URLs.</param>
         /// <param name="requestCountInSecond">Requests per second limit.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of responses to an Internet requests as an asynchronous operation.</returns>
         async IAsyncEnumerable<HttpResponseMessage> GetResponsesAsync(IEnumerable<string> requestUrls, int requestCountInSecond, [EnumeratorCancellation] CancellationToken ct)
         {

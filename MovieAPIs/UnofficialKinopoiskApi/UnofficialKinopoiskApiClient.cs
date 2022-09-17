@@ -32,7 +32,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <summary>
         /// Constructor of an unofficial API client for movie search with custom HttpClient parameter.
         /// </summary>
-        /// <param name="httpClient"></param>
+        /// <param name="httpClient">Sending HTTP requests and receiving HTTP responses from a resource identified by a URI.</param>
         public UnofficialKinopoiskApiClient(IHttpClient httpClient) : base(httpClient, new UnofficialKinopoiskHttpInvalidCodeHandler())
         {
             constants = UnofficialKinopoiskConstants.GetUnofficialKinopoiskConstants(new NewtonsoftJsonSerializer());
@@ -45,8 +45,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// </summary>
         /// <param name="pageRange">Range of pages from which information is needed.</param>
         /// <param name="topType">Type of top or collection.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of movies.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(Range pageRange, Tops topType = Tops.TOP_250_BEST_FILMS, [EnumeratorCancellation] CancellationToken ct = default)
         {
             await foreach (var filmSearch in GetTopFilmsFromPageRangeAsync(pageRange.Start.Value, pageRange.End.Value, topType, ct).ConfigureAwait(false))
@@ -61,8 +61,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="year">Release year.</param>
         /// <param name="month">Release month.</param>
         /// <param name="pageRange">Range of pages from which information is needed.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of digital releases.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmRelease> GetDigitalReleasesFromPageRangeAsync(int year, Months month, Range pageRange, [EnumeratorCancellation] CancellationToken ct = default)
         {
             await foreach (var filmRelease in GetDigitalReleasesFromPageRangeAsync(year, month, pageRange.Start.Value, pageRange.End.Value, ct).ConfigureAwait(false))
@@ -76,8 +76,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// </summary>
         /// <param name="keyword">Movie keyword.</param>
         /// <param name="pageRange">Range of pages from which information is needed.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of movies.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmSearch> GetFilmsByKeywordFromPageRangeAsync(string keyword, Range pageRange, [EnumeratorCancellation] CancellationToken ct = default)
         {
             await foreach (var filmSearch in GetFilmsByKeywordFromPageRangeAsync(keyword, pageRange.Start.Value, pageRange.End.Value, ct).ConfigureAwait(false))
@@ -100,8 +100,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="ratingTo">Maximum rating.</param>
         /// <param name="yearFrom">Minimum year.</param>
         /// <param name="yearTo">Maximum year.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of movies.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<Film> GetFilmsByFiltersFromPageRangeAsync(Range pageRange, int countryId = (int)Filter.ALL,
             int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
             MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
@@ -120,8 +120,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="id">Kinopoisk film id.</param>
         /// <param name="pageRange">Range of pages from which information is needed.</param>
         /// <param name="order">Order by date, rating and etc.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of viewer reviews.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<Review> GetViewerReviewsByIdFromPageRangeAsync(int id, Range pageRange,
             ReviewOrder order = ReviewOrder.DATE_DESC, [EnumeratorCancellation] CancellationToken ct = default)
         {
@@ -137,8 +137,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="id">Kinopoisk id.</param>
         /// <param name="pageRange">Range of pages from which information is needed.</param>
         /// <param name="type">Image type.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of images</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<Image> GetImagesByIdFromPageRangeAsync(int id, Range pageRange,
             ImageType type = ImageType.STILL, [EnumeratorCancellation] CancellationToken ct = default)
         {
@@ -153,8 +153,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// </summary>
         /// <param name="name">Person's name.</param>
         /// <param name="pageRange">Range of pages from which information is needed.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of information about a person.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmPersonInfo> GetPersonByNameFromPageRangeAsync(string name, Range pageRange, [EnumeratorCancellation] CancellationToken ct = default)
         {
             await foreach (var filmPersonInfo in GetPersonByNameFromPageRangeAsync(name, pageRange.Start.Value, pageRange.End.Value, ct).ConfigureAwait(false))
@@ -172,8 +172,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="fromPage">Start page.</param>
         /// <param name="toPage">End page.</param>
         /// <param name="topType">Type of top or collection.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of movies.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmSearch> GetTopFilmsFromPageRangeAsync(int fromPage = -1, int toPage = -1, Tops topType = Tops.TOP_250_BEST_FILMS, [EnumeratorCancellation] CancellationToken ct = default)
         {  
             var queryParams = new Dictionary<string, string>
@@ -196,8 +196,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="month">Release month.</param>
         /// <param name="fromPage">Start page.</param>
         /// <param name="toPage">End page.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of digital releases.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmRelease> GetDigitalReleasesFromPageRangeAsync(int year, Months month, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
         {
             var queryParams = new Dictionary<string, string>
@@ -220,8 +220,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="keyword">Movie keyword.</param>
         /// <param name="fromPage">Start page.</param>
         /// <param name="toPage">End page.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of movies.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmSearch> GetFilmsByKeywordFromPageRangeAsync(string keyword, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
         {
             string path = $"{constants.SearchByKeywordUrlV21}";
@@ -252,8 +252,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="yearTo">Maximum year.</param>
         /// <param name="fromPage">Start page.</param>
         /// <param name="toPage">End page.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of movies.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<Film> GetFilmsByFiltersFromPageRangeAsync(int countryId = (int)Filter.ALL,
             int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
             MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
@@ -289,8 +289,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="fromPage">Start page.</param>
         /// <param name="toPage">End page.</param>
         /// <param name="order">Order by date, rating and etc.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of viewer reviews.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<Review> GetViewerReviewsByIdFromPageRangeAsync(int id, int fromPage = -1, int toPage = -1,
             ReviewOrder order = ReviewOrder.DATE_DESC, [EnumeratorCancellation] CancellationToken ct = default)
         {
@@ -314,8 +314,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="type">Image type.</param>
         /// <param name="fromPage">Start page.</param>
         /// <param name="toPage">End page.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of images.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<Image> GetImagesByIdFromPageRangeAsync(int id,
             ImageType type = ImageType.STILL, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
         {
@@ -338,8 +338,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="name">Person's name.</param>
         /// <param name="fromPage">Start page.</param>
         /// <param name="toPage">End page.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of information about a person.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmPersonInfo> GetPersonByNameFromPageRangeAsync(string name, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
         {
             var queryParams = new Dictionary<string, string>
@@ -362,8 +362,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get movie data by kinopoisk id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a film response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<Film> GetFilmByIdAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}";
@@ -373,8 +373,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <summary>
         /// Returns a list of country and genre IDs that have been sold in /api/v2.2/films.
         /// </summary>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a genres and countries response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<GenresAndCountries> GetGenresAndCountriesAsync(CancellationToken ct = default)
         {
             string path = $"{constants.FiltersUrlV22}";
@@ -385,8 +385,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get a list of similar movies by kinopoisk id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a related films response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<RelatedFilm>> GetRelatedFilmsAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.SimilarsPathSegment}";
@@ -397,8 +397,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get data about facts and errors in movies by kinopoisk id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a facts and errors response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<FactsAndMistakes>> GetFilmFactsAndMistakesAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.FactsPathSegment}";
@@ -409,8 +409,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get rental data in different countries by kinopoisk id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a film distributions response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<FilmDistributionsResponseItems>> GetFilmDistributionsAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.DistributionsPathSegment}";
@@ -421,8 +421,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get sequels and prequels by kinopoisk id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a film response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<FilmSearch[]> GetSequelsAndPrequelsByIdAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV21}/{id}/{constants.SequelsAndPrequelsPathSegment}";
@@ -433,8 +433,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get budget and collection information by kinopoisk id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a monetization info response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<MonetizationInfo>> GetBoxOfficeByIdAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.BoxOfficePathSegment}";
@@ -445,8 +445,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get season data for the series by kinopoisk id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a season response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<Season>> GetSeasonsDataByIdAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.SeasonsPathSegment}";
@@ -457,8 +457,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get data about actors, directors, etc. by kinopoisk id.
         /// </summary>
         /// <param name="filmId">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a staff response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<Staff[]> GetStaffByFilmIdAsync(int filmId, CancellationToken ct = default)
         {
             var queryParams = new Dictionary<string, string>
@@ -474,8 +474,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// </summary>
         /// <param name="year">Release year.</param>
         /// <param name="month">Release month.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a film premiere response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<FilmPremiere>> GetPremieresListAsync(int year, Months month, CancellationToken ct = default)
         {
             var queryParams = new Dictionary<string, string>
@@ -491,8 +491,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get trailers, teasers, videos for the film by kinopoisk id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a video response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<Video>> GetTrailersAndTeasersByIdAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.VideosPathSegment}";
@@ -503,8 +503,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get film awards data by kinopoisk film id.
         /// </summary>
         /// <param name="id">Kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a nomination response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<Nomination>> GetAwardsByIdAsync(int id, CancellationToken ct = default)
         {
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.AwardsPathSegment}";
@@ -515,8 +515,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Get information about a specific person by kinopoisk id.
         /// </summary>
         /// <param name="personId">Person kinopoisk id.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a person response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<Person> GetStaffByPersonIdAsync(int personId, CancellationToken ct = default)
         {
             string path = $"{constants.StaffUrlV1}/{personId}";
@@ -533,8 +533,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="year">Release year.</param>
         /// <param name="month">Release month.</param>
         /// <param name="page">Page number.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a film release response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponseWithPagesCount<FilmRelease>> GetDigitalReleasesAsync(int year, Months month,
              int page = 1, CancellationToken ct = default)
         {
@@ -553,8 +553,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// </summary>
         /// <param name="keyword">Movie keyword.</param>
         /// <param name="page">Page number.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a film response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1, CancellationToken ct = default)
         {
             string path = $"{constants.SearchByKeywordUrlV21}";
@@ -579,9 +579,9 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="ratingTo">Maximum rating.</param>
         /// <param name="yearFrom">Minimum year.</param>
         /// <param name="yearTo">Maximum year.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <param name="page">Page number.</param>
         /// <returns>A task object with a film response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponseWithPagesCount<Film>> GetFilmsByFiltersAsync(int countryId = (int)Filter.ALL,
             int genreId = (int)Filter.ALL, string imdbId = "", string keyword = "",
             MovieOrder order = MovieOrder.RATING, MovieType type = MovieType.ALL, int ratingFrom = 0, int ratingTo = 10,
@@ -610,8 +610,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// </summary>
         /// <param name="topType">Type of top or collection.</param>
         /// <param name="page">Page number.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a film response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponseWithPagesCount<FilmSearch>> GetTopFilmsAsync(Tops topType = Tops.TOP_250_BEST_FILMS, int page = 1, CancellationToken ct = default)
         {
             var queryParams = new Dictionary<string, string>
@@ -629,8 +629,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="id">Kinopoisk id.</param>
         /// <param name="page">Page number.</param>
         /// <param name="order">Order by date, rating and etc.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a review response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ViewerReviewsResponse<Review>> GetViewerReviewsByIdAsync(int id, int page = 1,
             ReviewOrder order = ReviewOrder.DATE_DESC, CancellationToken ct = default)
         {
@@ -649,8 +649,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <param name="id">Kinopoisk id.</param>
         /// <param name="type">Image type.</param>
         /// <param name="page">Page number.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a image response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponseWithPagesCount<Image>> GetImagesByIdAsync(int id, 
             ImageType type = ImageType.STILL, int page = 1, CancellationToken ct = default)
         {
@@ -668,8 +668,8 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// </summary>
         /// <param name="name">Person name.</param>
         /// <param name="page">Page number.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>A task object with a person info response model.</returns>
+        /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponseWithPagesCount<FilmPersonInfo>> GetPersonByNameAsync(string name, int page = 1, CancellationToken ct = default)
         {
             var queryParams = new Dictionary<string, string>

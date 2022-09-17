@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 namespace MovieAPIs.Common.Http
 {
     /// <summary>
-    /// Interface for working with a HttpClient class.
+    /// Sending HTTP requests and receiving HTTP responses from a resource identified by a URI.
     /// </summary>
     public interface IHttpClient
     {
         /// <summary>
-        /// Send a GET request to the specified Uri with a cancellation token as an asynchronous operation.
+        /// Send a GET request to the specified Uri.
         /// </summary>
-        /// <param name="requestUrl">Request URL.</param>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>A task object that represents  a HTTP response message including the status code and data.</returns>
+        /// <param name="requestUrl">Url on which the GET request is made.</param>
+        /// <returns>HTTP response message including the status code and data.</returns>
         Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct = default);
     }
 }
