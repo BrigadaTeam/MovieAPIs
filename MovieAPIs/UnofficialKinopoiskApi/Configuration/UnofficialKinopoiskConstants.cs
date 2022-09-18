@@ -4,12 +4,23 @@ using System.IO;
 
 namespace MovieAPIs.UnofficialKinopoiskApi.Configuration
 {
+    /// <summary>
+    /// Constant elements of apis methods.
+    /// </summary>
     internal class UnofficialKinopoiskConstants
     {
+        /// <summary>
+        ///  Constant elements of UnofficialKinopoisk api methods.
+        /// </summary>
         static UnofficialKinopoiskConstants unofficialKinopoiskConstants;
         static object syncRoot = new();
         private UnofficialKinopoiskConstants() { }
 
+        /// <summary>
+        /// Getting constants from a config file.
+        /// </summary>
+        /// <param name="serializer">Serializer for config file.</param>
+        /// <returns>Constant elements of apis methods.</returns>
         public static UnofficialKinopoiskConstants GetUnofficialKinopoiskConstants(ISerializer serializer)
         {
             if(unofficialKinopoiskConstants == null)
