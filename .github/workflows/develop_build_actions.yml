@@ -24,7 +24,9 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-        echo "::echo::off"
+        echo "::remove-matcher owner=eslint-compact::"
+        echo "::remove-matcher owner=eslint-stylish::"
+        echo "::remove-matcher owner=tsc::"
     - name: Test
       run : dotnet test --no-restore --verbosity normal
       
@@ -45,7 +47,9 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-        echo "::echo::off"
+        echo "::remove-matcher owner=eslint-compact::"
+        echo "::remove-matcher owner=eslint-stylish::"
+        echo "::remove-matcher owner=tsc::"
     - name: Test
       run : dotnet test --no-restore --verbosity normal
 
