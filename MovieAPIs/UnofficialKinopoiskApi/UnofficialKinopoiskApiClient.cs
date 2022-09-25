@@ -183,7 +183,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             string path = $"{constants.TopUrlV22}";
             var response = await GetTopFilmsAsync(topType, ct: ct).ConfigureAwait(false);
             int requestsCountInSecond = 5;
-            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return filmSearch;
             }
@@ -208,7 +208,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             string path = $"{constants.ReleasesUrlV21}";
             var response = await GetDigitalReleasesAsync(year, month, ct: ct).ConfigureAwait(false);
             int requestCountInSecond = 5;
-            await foreach (var filmRelease in GetResponsesDataFromPageRangeAsync(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            await foreach (var filmRelease in GetResponsesDataFromPageRangeAsync<FilmRelease>(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return filmRelease;
             }
@@ -231,7 +231,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             };
             var response = await GetFilmsByKeywordAsync(keyword, ct: ct).ConfigureAwait(false);
             int requestsCountInSecond = 5;
-            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return filmSearch;
             }
@@ -276,7 +276,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             var response = await GetFilmsByFiltersAsync(countryId: countryId, genreId: genreId, imdbId: imdbId, keyword: keyword, order: order,
                 type: type, ratingFrom: ratingFrom, ratingTo: ratingTo, yearFrom: yearFrom, yearTo: yearTo, ct: ct).ConfigureAwait(false);
             int requestCountInSecond = 5;
-            await foreach (var film in GetResponsesDataFromPageRangeAsync(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            await foreach (var film in GetResponsesDataFromPageRangeAsync<Film>(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return film;
             }
@@ -301,7 +301,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.ReviewsPathSegment}";
             var response = await GetViewerReviewsByIdAsync(id, order: order, ct: ct).ConfigureAwait(false);
             int requestsCountInSecond = 20;
-            await foreach (var review in GetResponsesDataFromPageRangeAsync(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            await foreach (var review in GetResponsesDataFromPageRangeAsync<Review>(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return review;
             }
@@ -326,7 +326,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             string path = $"{constants.FilmsUrlV22}/{id}/{constants.ImagesPathSegment}";
             var response = await GetImagesByIdAsync(id, type, ct: ct).ConfigureAwait(false);
             int requestCountInSecond = 20;
-            await foreach (var image in GetResponsesDataFromPageRangeAsync(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            await foreach (var image in GetResponsesDataFromPageRangeAsync<Image>(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return image;
             }
@@ -349,7 +349,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             string path = $"{constants.PersonsUrlV1}";
             var response = await GetPersonByNameAsync(name, ct: ct).ConfigureAwait(false);
             int requestCountInSecond = 5;
-            await foreach (var filmPersonInfo in GetResponsesDataFromPageRangeAsync(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response, ct).ConfigureAwait(false))
+            await foreach (var filmPersonInfo in GetResponsesDataFromPageRangeAsync<FilmPersonInfo>(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return filmPersonInfo;
             }

@@ -80,10 +80,10 @@ namespace MovieAPIs.Common
         /// <typeparam name="T">Response models.</typeparam>
         /// <returns>Returns an enumerator that iterates asynchronously through the collection of response models.</returns>
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
-        protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage, int firstPage, ItemsResponseWithPagesCount<T> response, [EnumeratorCancellation] CancellationToken ct = default)
+        protected async IAsyncEnumerable<T> GetResponsesDataFromPageRangeAsync<T>(string path, Dictionary<string, string> queryParams, int requestCountInSecond, int fromPage, int toPage, int firstPage, int pagesCount, [EnumeratorCancellation] CancellationToken ct = default)
         {
             fromPage = fromPage == -1 ? firstPage : fromPage;
-            toPage = toPage == -1 ? response.PagesCount : toPage;
+            toPage = toPage == -1 ? pagesCount : toPage;
             await foreach (var data in manyRequestsHelper.GetDataAsync<T>(queryParams, requestCountInSecond, path, fromPage, toPage, ct).ConfigureAwait(false))
             {
                 yield return data;

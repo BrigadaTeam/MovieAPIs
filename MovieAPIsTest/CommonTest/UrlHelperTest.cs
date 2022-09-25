@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System;
 using MovieAPIs.Common.Helper;
 
-namespace MovieAPIsTest
+namespace MovieAPIsTest.CommonTest
 {
-    public class UrlHelperTests
+    public class UrlHelperTest
     {
         [TestCase("firstLevel/secondLevel")]
         [TestCase("some string")]
@@ -38,6 +38,23 @@ namespace MovieAPIsTest
             string actualUrl = UrlHelper.GetUrl(path, queryParams);
 
             Assert.AreEqual(expectedUrl, actualUrl);
+        }
+
+        [Test]
+        public void GetUrlsTest()
+        {
+            string path = "home/room/bed";
+            var queryParams = new Dictionary<string, string>
+            {
+                ["one"] = "oneValue",
+                ["two"] = "twoValue"
+            };
+            var expectedUrls = new[] { "home/room/bed?one=oneValue&two=twoValue&page=1", "home/room/bed?one=oneValue&two=twoValue&page=2" };
+
+            var actualUrls = UrlHelper.GetUrls(queryParams, path, 1, expectedUrls.Length);
+
+            CollectionAssert.AreEqual(expectedUrls, actualUrls);
+            Assert.IsFalse(queryParams.ContainsKey("page"));
         }
 
         static object[] getQueryTestSource =
@@ -73,23 +90,5 @@ namespace MovieAPIsTest
             new object[]{ new Dictionary<string, string>(), "home/room", "home/room"},
             new object[] { null, "home/room", "home/room"}
         };
-
-
-        [Test]
-        public void GetUrlsTest()
-        {
-            string path = "home/room/bed";
-            var queryParams = new Dictionary<string, string>
-            {
-                ["one"] = "oneValue",
-                ["two"] = "twoValue"
-            };
-            var expectedUrls = new[] { "home/room/bed?one=oneValue&two=twoValue&page=1", "home/room/bed?one=oneValue&two=twoValue&page=2" };
-
-            var actualUrls = UrlHelper.GetUrls(queryParams, path, 1, expectedUrls.Length);
-
-            CollectionAssert.AreEqual(expectedUrls, actualUrls);
-            Assert.IsFalse(queryParams.ContainsKey("page"));
-        }
     }
 }
