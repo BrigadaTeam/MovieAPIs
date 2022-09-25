@@ -14,6 +14,6 @@ namespace MovieAPIs.Common.Http
         /// </summary>
         /// <param name="requestUrl">Url on which the GET request is made.</param>
         /// <returns>HTTP response message including the status code and data.</returns>
-        Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct = default);
+        Task<HttpResponseMessage> GetAsync(string requestUrl, CancellationToken ct = default); 
     }
 }
