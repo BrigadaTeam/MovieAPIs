@@ -19,7 +19,7 @@ namespace MovieAPIs.Common.Serialization
     /// <summary>
     /// Newtonsoft Json serializer.
     /// </summary>
-    internal class NewtonsoftJsonSerializer : ISerializer
+    internal class NewtonsoftJsonSerializer : ISerializer 
     {
         /// <summary>
         /// Deserializing a json string into an object using a Newtonsoft Json serializer.
