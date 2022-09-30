@@ -20,7 +20,7 @@ The library is for .net version 6.0 and C# 10.0.
 ### Project preparation
 
 * Install MovieAPI in Nuget Package Manager or or add .dll dependencies.
-* Add configuration.json file to the project directory
+* Add configuration.json file to the project directory.
 
 ### Quick start
 
@@ -37,34 +37,34 @@ var response = client.GetFilmByIdAsync(5664);
 
 ### Description of methods from UnofficialKinopoiskApiClient
 
-|               Method name                 |          Description          |
-|-------------------------------------------|-------------------------------|
-| `GetTopFilmsFromPageRangeAsync`           |
-| `GetDigitalReleasesFromPageRangeAsync`    |
-| `GetFilmsByKeywordFromPageRangeAsync`     |
-| `GetFilmsByFiltersFromPageRangeAsync`     |
-| `GetViewerReviewsByIdFromPageRangeAsync`  |
-| `GetImagesByIdFromPageRangeAsync`         |
-| `GetPersonByNameFromPageRangeAsync`       |
-| `GetFilmByIdAsync`                        |
-| `GetGenresAndCountriesAsync`              |
-| `GetRelatedFilmsAsync`                    |
-| `GetFilmFactsAndMistakesAsync`            |
-| `GetFilmDistributionsAsync`               |
-| `GetSequelsAndPrequelsByIdAsync`          |
-| `GetBoxOfficeByIdAsync`                   |
-| `GetSeasonsDataByIdAsync`                 |
-| `GetStaffByFilmIdAsync`                   |
-| `GetPremieresListAsync`                   |
-| `GetTrailersAndTeasersByIdAsync`          |
-| `GetAwardsByIdAsync`                      |
-| `GetStaffByPersonIdAsync`                 |
-| `GetFilmsByKeywordAsync`                  |
-| `GetFilmsByFiltersAsync`                  |
-| `GetTopFilmsAsync`                        |
-| `GetViewerReviewsByIdAsync`               |
-| `GetImagesByIdAsync`                      |
-| `GetPersonByNameAsync`                    |
+|               Method name                 |                               Description                                                       |
+|-------------------------------------------|-------------------------------------------------------------------------------------------------|
+| `GetTopFilmsFromPageRangeAsync`           | Get a list of movies from various tops and collections from page range                          |
+| `GetDigitalReleasesFromPageRangeAsync`    | Get list of digital releases from page range                                                    |
+| `GetFilmsByKeywordFromPageRangeAsync`     | Get list of movies by keywords from page range                                                  | 
+| `GetFilmsByFiltersFromPageRangeAsync`     | Get a list of movies by different filters from page range                                       |
+| `GetViewerReviewsByIdFromPageRangeAsync`  | Returns a list of viewer reviews from page range                                                |
+| `GetImagesByIdFromPageRangeAsync`         | Get movie related images from page range                                                        |
+| `GetPersonByNameFromPageRangeAsync`       | Search for actors, directors, etc by name from page range                                       |
+| `GetFilmByIdAsync`                        | Get movie data by kinopoisk id                                                                  |
+| `GetGenresAndCountriesAsync`              | Returns a list of country and genre IDs that have been sold in /api/v2.2/films                  |
+| `GetRelatedFilmsAsync`                    | Get a list of similar movies by kinopoisk id                                                    |
+| `GetFilmFactsAndMistakesAsync`            | Get data about facts and errors in movies by kinopoisk id                                       |
+| `GetFilmDistributionsAsync`               | Get rental data in different countries by kinopoisk id                                          |
+| `GetSequelsAndPrequelsByIdAsync`          | Get sequels and prequels by kinopoisk id                                                        |
+| `GetBoxOfficeByIdAsync`                   | Get budget and collection information by kinopoisk id                                           |
+| `GetSeasonsDataByIdAsync`                 | Get season data for the series by kinopoisk id                                                  |
+| `GetStaffByFilmIdAsync`                   | Get data about actors, directors, etc. by kinopoisk id                                          |
+| `GetPremieresListAsync`                   | Get list of film premieres                                                                      |
+| `GetTrailersAndTeasersByIdAsync`          | Get trailers, teasers, videos for the film by kinopoisk id                                      |
+| `GetAwardsByIdAsync`                      | Get film awards data by kinopoisk film id                                                       |
+| `GetStaffByPersonIdAsync`                 | Get information about a specific person by kinopoisk id                                         |
+| `GetFilmsByKeywordAsync`                  | Get movie list by keyword                                                                       |
+| `GetFilmsByFiltersAsync`                  | Get a list of movies by various filters                                                         |
+| `GetTopFilmsAsync`                        | Get movies from various tops and collections                                                    |
+| `GetViewerReviewsByIdAsync`               | Returns a list of paginated viewer reviews                                                      |
+| `GetImagesByIdAsync`                      | Get images associated with the movie with pagination. Each page contains no more than 20 films  |
+| `GetPersonByNameAsync`                    | Search for actors, directors, etc. by name. One page can contain up to 50 items in items        |
 
 ### Technology stack
 
