@@ -19,8 +19,7 @@ The library is for .net version 6.0 and C# 10.0.
 
 ### Project preparation
 
-* Install MovieAPI in Nuget Package Manager or or add .dll dependencies.
-* Add configuration.json file to the project directory.
+Install MovieAPI in Nuget Package Manager or add .dll in project dependencies.
 
 ### Quick start
 
