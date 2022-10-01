@@ -16,7 +16,7 @@ An open source project containing methods for working with:
 
 ### Quick start
 
-* Install MovieAPI in Nuget Package Manager.
+* Install MovieAPI in Nuget Package Manager
 * [Get a token for Kinopoisk Api Unofficial](https://kinopoiskapiunofficial.tech/profile)
 
 ```cs
