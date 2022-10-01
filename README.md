@@ -14,17 +14,10 @@ An open source project containing methods for working with:
 
 ---
 
-## Get Started
-
-### Install .NET
-
-The library is for .net version 6.0 and C# 10.0.
-
-### Project preparation
-
-Install MovieAPI in Nuget Package Manager.
-
 ### Quick start
+
+* Install MovieAPI in Nuget Package Manager.
+* [Get a token for Kinopoisk Api Unofficial](https://kinopoiskapiunofficial.tech/profile)
 
 ```cs
 using MovieAPIs.UnofficialKinopoiskApi
