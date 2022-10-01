@@ -601,7 +601,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["keyword"] = keyword,
                 ["page"] = page.ToString()
             };
-            string path = $"{constants.FiltersUrlV22}";
+            string path = $"{constants.FilmsUrlV22}";
             return await GetResponseDataAsync<ItemsResponseWithPagesCount<Film>>(path, ct, queryParams).ConfigureAwait(false);
         }
 
