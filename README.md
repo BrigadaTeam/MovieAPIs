@@ -8,9 +8,8 @@
 C# library for working with movie services api.
 An open source project containing methods for working with: 
 
-* Kinopoisk Unofficial API.
-* Kinopoisk API (in progress).
-...
+* Kinopoisk Unofficial API
+* Kinopoisk API (in progress)
 
 [Kinopoisk Api Unofficial](https://kinopoiskapiunofficial.tech/documentation/api/)
 
