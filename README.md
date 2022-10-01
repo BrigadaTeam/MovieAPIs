@@ -6,8 +6,13 @@
 </p>
 
 C# library for working with movie services api.
-An open source project containing methods for working with api of the most popular movie services.
-Api documentation - [Kinopoisk Api Unofficial](https://kinopoiskapiunofficial.tech/documentation/api/)
+An open source project containing methods for working with: 
+
+* Kinopoisk Unofficial API.
+* Kinopoisk API (in progress).
+...
+
+[Kinopoisk Api Unofficial](https://kinopoiskapiunofficial.tech/documentation/api/)
 
 ---
 
@@ -19,7 +24,7 @@ The library is for .net version 6.0 and C# 10.0.
 
 ### Project preparation
 
-Install MovieAPI in Nuget Package Manager or add .dll in project dependencies.
+Install MovieAPI in Nuget Package Manager.
 
 ### Quick start
 
@@ -29,7 +34,14 @@ using MovieAPIs.UnofficialKinopoiskApi
 var client = new UnofficialKinopoiskApiClient("api-key");
 
 // An example of getting a movie by its Id on the movie search
-var response = client.GetFilmByIdAsync(5664);
+var film = client.GetFilmByIdAsync(5664);
+
+// Get movies from a range of pages
+var topFilms = client.GetTopFilmsFromPageRangeAsync(fromPage:3, toPage:5);
+var filmsByKeyword = client.GetFilmsByKeywordFromPageRangeAsync("Keyword", new Range(1, 4));
+
+// Get from all pages
+var filmsByKeywordFromAllPages = client.GetFilmsByKeywordFromPageRangeAsync("Keyword");
 ```
 
 ## Library description
@@ -64,12 +76,6 @@ var response = client.GetFilmByIdAsync(5664);
 | `GetViewerReviewsByIdAsync`               | Returns a list of paginated viewer reviews                                                      |
 | `GetImagesByIdAsync`                      | Get images associated with the movie with pagination. Each page contains no more than 20 films  |
 | `GetPersonByNameAsync`                    | Search for actors, directors, etc. by name. One page can contain up to 50 items in items        |
-
-### Technology stack
-
-* .NET 6.0
-* C# 10.0
-* [Newtonsoft.json](https://www.newtonsoft.com/json)
 
 ---
 
