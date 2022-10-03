@@ -29,7 +29,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi.Configuration
                 {
                     if(unofficialKinopoiskConstants == null)
                     {
-                        using (var reader = new StreamReader(Path.Combine("UnofficialKinopoiskApi", "Configuration", "UnofficialKinopoiskConfiguration.json")))
+                        using (var reader = new StreamReader(Path.Combine(@"..\UnofficialKinopoiskApi", "Configuration", "UnofficialKinopoiskConfiguration.json")))
                         {
                             string json = reader.ReadToEnd();
                             unofficialKinopoiskConstants = serializer.Deserialize<UnofficialKinopoiskConstants>(json);
