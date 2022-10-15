@@ -7,98 +7,46 @@ namespace MovieAPIs.UnofficialKinopoiskApi.Configuration
     /// <summary>
     /// Constant elements of apis methods.
     /// </summary>
-    internal class UnofficialKinopoiskConstants
+    static internal class UnofficialKinopoiskConstants
     {
-        /// <summary>
-        ///  Constant elements of UnofficialKinopoisk api methods.
-        /// </summary>
-        static UnofficialKinopoiskConstants unofficialKinopoiskConstants;
-        static object syncRoot = new();
-        private UnofficialKinopoiskConstants() { }
+        public const string FilmsUrlV22 = "https://kinopoiskapiunofficial.tech/api/v2.2/films";
 
-        /// <summary>
-        /// Getting constants from a config file.
-        /// </summary>
-        /// <param name="serializer">Serializer for config file.</param>
-        /// <returns>Constant elements of apis methods.</returns>
-        public static UnofficialKinopoiskConstants GetUnofficialKinopoiskConstants(ISerializer serializer)
-        {
-            if(unofficialKinopoiskConstants == null)
-            {
-                lock (syncRoot)
-                {
-                    if(unofficialKinopoiskConstants == null)
-                    {
-                        using (var reader = new StreamReader(Path.Combine("UnofficialKinopoiskApi", "Configuration", "UnofficialKinopoiskConfiguration.json")))
-                        {
-                            string json = reader.ReadToEnd();
-                            unofficialKinopoiskConstants = serializer.Deserialize<UnofficialKinopoiskConstants>(json);
-                        }
-                    }
-                }
-            }
+        public const string FiltersUrlV22 = "https://kinopoiskapiunofficial.tech/api/v2.2/films/filters";
 
-            return unofficialKinopoiskConstants;
-        }
+        public const string PremieresUrlV22 = "https://kinopoiskapiunofficial.tech/api/v2.2/films/premieres";
 
-        [JsonProperty]
-        public readonly string FilmsUrlV22;
+        public const string TopUrlV22 = "https://kinopoiskapiunofficial.tech/api/v2.2/films/top";
 
-        [JsonProperty]
-        public readonly string FiltersUrlV22;
+        public const string SearchByKeywordUrlV21 = "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword";
 
-        [JsonProperty]
-        public readonly string PremieresUrlV22;
+        public const string FilmsUrlV21 = "https://kinopoiskapiunofficial.tech/api/v2.1/films";
 
-        [JsonProperty]
-        public readonly string TopUrlV22;
+        public const string ReleasesUrlV21 = "https://kinopoiskapiunofficial.tech/api/v2.1/films/releases";
 
-        [JsonProperty]
-        public readonly string SearchByKeywordUrlV21;
+        public const string StaffUrlV1 = "https://kinopoiskapiunofficial.tech/api/v1/staff";
 
-        [JsonProperty]
-        public readonly string FilmsUrlV21;
+        public const string PersonsUrlV1 = "https://kinopoiskapiunofficial.tech/api/v1/persons";
 
-        [JsonProperty]
-        public readonly string ReleasesUrlV21;
+        public const string SeasonsPathSegment = "seasons";
 
-        [JsonProperty]
-        public readonly string StaffUrlV1;
+        public const string FactsPathSegment = "facts";
 
-        [JsonProperty]
-        public readonly string PersonsUrlV1;
+        public const string DistributionsPathSegment = "distributions";
 
-        [JsonProperty]
-        public readonly string SeasonsPathSegment;
+        public const string BoxOfficePathSegment = "box_office";
 
-        [JsonProperty]
-        public readonly string FactsPathSegment;
+        public const string AwardsPathSegment = "awards";
 
-        [JsonProperty]
-        public readonly string DistributionsPathSegment;
+        public const string VideosPathSegment = "videos";
 
-        [JsonProperty]
-        public readonly string BoxOfficePathSegment;
+        public const string SimilarsPathSegment = "similars";
 
-        [JsonProperty]
-        public readonly string AwardsPathSegment;
+        public const string ImagesPathSegment = "images";
 
-        [JsonProperty]
-        public readonly string VideosPathSegment;
+        public const string ReviewsPathSegment = "reviews";
 
-        [JsonProperty]
-        public readonly string SimilarsPathSegment;
+        public const string SequelsAndPrequelsPathSegment = "sequels_and_prequels";
 
-        [JsonProperty]
-        public readonly string ImagesPathSegment;
-
-        [JsonProperty]
-        public readonly string ReviewsPathSegment;
-
-        [JsonProperty]
-        public readonly string SequelsAndPrequelsPathSegment;
-
-        [JsonProperty]
-        public readonly int NumberFirstPage;
+        public const int NumberFirstPage = 1;
     }
 }

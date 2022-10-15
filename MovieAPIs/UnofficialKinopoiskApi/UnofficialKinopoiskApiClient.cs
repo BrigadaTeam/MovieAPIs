@@ -17,12 +17,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
     /// Client for working with the unofficial kinopoisk api.
     /// </summary>
     public class UnofficialKinopoiskApiClient : MovieApiClientBase
-    {
-        /// <summary>
-        /// Constant elements of unofficial kinopoisk api methods.
-        /// </summary>
-        readonly UnofficialKinopoiskConstants constants;
-        
+    {   
         /// <summary>
         /// Constructor of an unofficial API client for movie search with api key parameter.
         /// </summary>
@@ -33,10 +28,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// Constructor of an unofficial API client for movie search with custom HttpClient parameter.
         /// </summary>
         /// <param name="httpClient">Sending HTTP requests and receiving HTTP responses from a resource identified by a URI.</param>
-        public UnofficialKinopoiskApiClient(IHttpClient httpClient) : base(httpClient, new UnofficialKinopoiskHttpInvalidCodeHandler())
-        {
-            constants = UnofficialKinopoiskConstants.GetUnofficialKinopoiskConstants(new NewtonsoftJsonSerializer());
-        }
+        public UnofficialKinopoiskApiClient(IHttpClient httpClient) : base(httpClient, new UnofficialKinopoiskHttpInvalidCodeHandler()) { }
 
         #region Method for returning data from range page with range parameter.
         
@@ -180,10 +172,10 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             {
                 ["type"] = topType.ToString()
             };
-            string path = $"{constants.TopUrlV22}";
+            string path = $"{UnofficialKinopoiskConstants.TopUrlV22}";
             var response = await GetTopFilmsAsync(topType, ct: ct).ConfigureAwait(false);
             int requestsCountInSecond = 5;
-            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
+            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, requestsCountInSecond, fromPage, toPage, UnofficialKinopoiskConstants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return filmSearch;
             }
@@ -205,10 +197,10 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["year"] = year.ToString(),
                 ["month"] = month.ToString()
             };
-            string path = $"{constants.ReleasesUrlV21}";
+            string path = $"{UnofficialKinopoiskConstants.ReleasesUrlV21}";
             var response = await GetDigitalReleasesAsync(year, month, ct: ct).ConfigureAwait(false);
             int requestCountInSecond = 5;
-            await foreach (var filmRelease in GetResponsesDataFromPageRangeAsync<FilmRelease>(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
+            await foreach (var filmRelease in GetResponsesDataFromPageRangeAsync<FilmRelease>(path, queryParams, requestCountInSecond, fromPage, toPage, UnofficialKinopoiskConstants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return filmRelease;
             }
@@ -224,14 +216,14 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async IAsyncEnumerable<FilmSearch> GetFilmsByKeywordFromPageRangeAsync(string keyword, int fromPage = -1, int toPage = -1, [EnumeratorCancellation] CancellationToken ct = default)
         {
-            string path = $"{constants.SearchByKeywordUrlV21}";
+            string path = $"{UnofficialKinopoiskConstants.SearchByKeywordUrlV21}";
             var queryParams = new Dictionary<string, string>
             {
                 ["keyword"] = keyword
             };
             var response = await GetFilmsByKeywordAsync(keyword, ct: ct).ConfigureAwait(false);
             int requestsCountInSecond = 5;
-            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
+            await foreach (var filmSearch in GetResponsesDataFromPageRangeAsync<FilmSearch>(path, queryParams, requestsCountInSecond, fromPage, toPage, UnofficialKinopoiskConstants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return filmSearch;
             }
@@ -272,11 +264,11 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["imdbId"] = imdbId,
                 ["keyword"] = keyword
             };
-            string path = $"{constants.FiltersUrlV22}";
+            string path = $"{UnofficialKinopoiskConstants.FiltersUrlV22}";
             var response = await GetFilmsByFiltersAsync(countryId: countryId, genreId: genreId, imdbId: imdbId, keyword: keyword, order: order,
                 type: type, ratingFrom: ratingFrom, ratingTo: ratingTo, yearFrom: yearFrom, yearTo: yearTo, ct: ct).ConfigureAwait(false);
             int requestCountInSecond = 5;
-            await foreach (var film in GetResponsesDataFromPageRangeAsync<Film>(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
+            await foreach (var film in GetResponsesDataFromPageRangeAsync<Film>(path, queryParams, requestCountInSecond, fromPage, toPage, UnofficialKinopoiskConstants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return film;
             }
@@ -298,10 +290,10 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             {
                 ["order"] = order.ToString()
             };
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ReviewsPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.ReviewsPathSegment}";
             var response = await GetViewerReviewsByIdAsync(id, order: order, ct: ct).ConfigureAwait(false);
             int requestsCountInSecond = 20;
-            await foreach (var review in GetResponsesDataFromPageRangeAsync<Review>(path, queryParams, requestsCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
+            await foreach (var review in GetResponsesDataFromPageRangeAsync<Review>(path, queryParams, requestsCountInSecond, fromPage, toPage, UnofficialKinopoiskConstants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return review;
             }
@@ -323,10 +315,10 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             {
                 ["type"] = type.ToString()
             };
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ImagesPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.ImagesPathSegment}";
             var response = await GetImagesByIdAsync(id, type, ct: ct).ConfigureAwait(false);
             int requestCountInSecond = 20;
-            await foreach (var image in GetResponsesDataFromPageRangeAsync<Image>(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
+            await foreach (var image in GetResponsesDataFromPageRangeAsync<Image>(path, queryParams, requestCountInSecond, fromPage, toPage, UnofficialKinopoiskConstants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return image;
             }
@@ -346,10 +338,10 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             {
                 ["name"] = name
             };
-            string path = $"{constants.PersonsUrlV1}";
+            string path = $"{UnofficialKinopoiskConstants.PersonsUrlV1}";
             var response = await GetPersonByNameAsync(name, ct: ct).ConfigureAwait(false);
             int requestCountInSecond = 5;
-            await foreach (var filmPersonInfo in GetResponsesDataFromPageRangeAsync<FilmPersonInfo>(path, queryParams, requestCountInSecond, fromPage, toPage, constants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
+            await foreach (var filmPersonInfo in GetResponsesDataFromPageRangeAsync<FilmPersonInfo>(path, queryParams, requestCountInSecond, fromPage, toPage, UnofficialKinopoiskConstants.NumberFirstPage, response.PagesCount, ct).ConfigureAwait(false))
             {
                 yield return filmPersonInfo;
             }
@@ -366,7 +358,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<Film> GetFilmByIdAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}";
             return await GetResponseDataAsync<Film>(path, ct).ConfigureAwait(false);
         }
 
@@ -377,7 +369,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<GenresAndCountries> GetGenresAndCountriesAsync(CancellationToken ct = default)
         {
-            string path = $"{constants.FiltersUrlV22}";
+            string path = $"{UnofficialKinopoiskConstants.FiltersUrlV22}";
             return await GetResponseDataAsync<GenresAndCountries>(path, ct).ConfigureAwait(false);
         }
 
@@ -389,7 +381,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<RelatedFilm>> GetRelatedFilmsAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.SimilarsPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.SimilarsPathSegment}";
             return await GetResponseDataAsync<ItemsResponse<RelatedFilm>>(path, ct).ConfigureAwait(false);
         }
 
@@ -401,7 +393,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<FactsAndMistakes>> GetFilmFactsAndMistakesAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.FactsPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.FactsPathSegment}";
             return await GetResponseDataAsync<ItemsResponse<FactsAndMistakes>>(path, ct).ConfigureAwait(false);
         }
 
@@ -413,7 +405,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<FilmDistributionsResponseItems>> GetFilmDistributionsAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.DistributionsPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.DistributionsPathSegment}";
             return await GetResponseDataAsync<ItemsResponse<FilmDistributionsResponseItems>>(path, ct).ConfigureAwait(false);
         }
 
@@ -425,7 +417,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<FilmSearch[]> GetSequelsAndPrequelsByIdAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV21}/{id}/{constants.SequelsAndPrequelsPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV21}/{id}/{UnofficialKinopoiskConstants.SequelsAndPrequelsPathSegment}";
             return await GetResponseDataAsync<FilmSearch[]>(path, ct).ConfigureAwait(false);
         }
 
@@ -437,7 +429,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<MonetizationInfo>> GetBoxOfficeByIdAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.BoxOfficePathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.BoxOfficePathSegment}";
             return await GetResponseDataAsync<ItemsResponse<MonetizationInfo>>(path, ct).ConfigureAwait(false);
         }
 
@@ -449,7 +441,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<Season>> GetSeasonsDataByIdAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.SeasonsPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.SeasonsPathSegment}";
             return await GetResponseDataAsync<ItemsResponse<Season>>(path, ct).ConfigureAwait(false);
         }
 
@@ -465,7 +457,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
             {
                 ["filmId"] = filmId.ToString(),
             };
-            string path = $"{constants.StaffUrlV1}";
+            string path = $"{UnofficialKinopoiskConstants.StaffUrlV1}";
             return await GetResponseDataAsync<Staff[]>(path, ct, queryParams).ConfigureAwait(false);
         }
 
@@ -483,7 +475,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["year"] = year.ToString(),
                 ["month"] = month.ToString(),
             };
-            string path = $"{constants.PremieresUrlV22}";
+            string path = $"{UnofficialKinopoiskConstants.PremieresUrlV22}";
             return await GetResponseDataAsync<ItemsResponse<FilmPremiere>>(path, ct, queryParams).ConfigureAwait(false);
         }
 
@@ -495,7 +487,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<Video>> GetTrailersAndTeasersByIdAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.VideosPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.VideosPathSegment}";
             return await GetResponseDataAsync<ItemsResponse<Video>>(path, ct).ConfigureAwait(false);
         }
 
@@ -507,7 +499,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponse<Nomination>> GetAwardsByIdAsync(int id, CancellationToken ct = default)
         {
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.AwardsPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.AwardsPathSegment}";
             return await GetResponseDataAsync<ItemsResponse<Nomination>>(path, ct).ConfigureAwait(false);
         }
         
@@ -519,7 +511,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<Person> GetStaffByPersonIdAsync(int personId, CancellationToken ct = default)
         {
-            string path = $"{constants.StaffUrlV1}/{personId}";
+            string path = $"{UnofficialKinopoiskConstants.StaffUrlV1}/{personId}";
             return await GetResponseDataAsync<Person>(path, ct).ConfigureAwait(false);
         }
 
@@ -544,7 +536,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["month"] = month.ToString(),
                 ["page"] = page.ToString()
             };
-            string path = $"{constants.ReleasesUrlV21}";
+            string path = $"{UnofficialKinopoiskConstants.ReleasesUrlV21}";
             return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmRelease>>(path, ct, queryParams).ConfigureAwait(false);
         }
 
@@ -557,7 +549,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
         /// <exception cref="HttpRequestException">An exception thrown when a http request responds with a status code other than successful.</exception>
         public async Task<ItemsResponseWithPagesCount<FilmSearch>> GetFilmsByKeywordAsync(string keyword, int page = 1, CancellationToken ct = default)
         {
-            string path = $"{constants.SearchByKeywordUrlV21}";
+            string path = $"{UnofficialKinopoiskConstants.SearchByKeywordUrlV21}";
             var queryParams = new Dictionary<string, string>
             {
                 ["keyword"] = keyword,
@@ -601,7 +593,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["keyword"] = keyword,
                 ["page"] = page.ToString()
             };
-            string path = $"{constants.FilmsUrlV22}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}";
             return await GetResponseDataAsync<ItemsResponseWithPagesCount<Film>>(path, ct, queryParams).ConfigureAwait(false);
         }
 
@@ -619,7 +611,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["type"] = topType.ToString(),
                 ["page"] = page.ToString()
             };
-            string path = $"{constants.TopUrlV22}";
+            string path = $"{UnofficialKinopoiskConstants.TopUrlV22}";
             return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmSearch>>(path, ct, queryParams).ConfigureAwait(false);
         }      
 
@@ -639,7 +631,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["page"] = page.ToString(),
                 ["order"] = order.ToString(),
             };
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ReviewsPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.ReviewsPathSegment}";
             return await GetResponseDataAsync<ViewerReviewsResponse<Review>>(path, ct, queryParams).ConfigureAwait(false);
         }
        
@@ -659,7 +651,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["page"] = page.ToString(),
                 ["type"] = type.ToString(),
             };
-            string path = $"{constants.FilmsUrlV22}/{id}/{constants.ImagesPathSegment}";
+            string path = $"{UnofficialKinopoiskConstants.FilmsUrlV22}/{id}/{UnofficialKinopoiskConstants.ImagesPathSegment}";
             return await GetResponseDataAsync<ItemsResponseWithPagesCount<Image>>(path, ct, queryParams).ConfigureAwait(false);
         }
 
@@ -677,7 +669,7 @@ namespace MovieAPIs.UnofficialKinopoiskApi
                 ["name"] = name,
                 ["page"] = page.ToString()
             };
-            string path = $"{constants.PersonsUrlV1}";
+            string path = $"{UnofficialKinopoiskConstants.PersonsUrlV1}";
             return await GetResponseDataAsync<ItemsResponseWithPagesCount<FilmPersonInfo>>(path, ct, queryParams).ConfigureAwait(false);
         }
         #endregion
