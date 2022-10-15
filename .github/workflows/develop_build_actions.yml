@@ -1,0 +1,50 @@
+name: .NET Pipeline
+
+on: 
+  push:
+    branches: [ 'develop', 'master' ]
+  pull_request:
+    branches: [ 'develop', 'master' ] 
+
+jobs:    
+  build-linux-dotnet6:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '6.x' ]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run : dotnet test --no-restore --verbosity normal
+      
+  build-win-dotnet6:
+
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '6.x' ]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run : dotnet test --no-restore --verbosity normal
+
+  

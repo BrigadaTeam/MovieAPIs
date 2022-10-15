@@ -1,9 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+	<TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+	<NoWarn>CS8618</NoWarn>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<Description>C# library for working with movie services api</Description>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/BrigadaTeam/MovieAPIs/tree/master</RepositoryUrl>
+	<PackageTags>Movie KinopoiskApiUnofficial KinopoiskAPI</PackageTags>
+	<Version>1.0.2</Version>
+	<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
 
 </Project>
