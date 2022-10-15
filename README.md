@@ -72,5 +72,7 @@ var filmsByKeywordFromAllPages = client.GetFilmsByKeywordFromPageRangeAsync("Key
 
 ## Developers
 
+Brigada team email: brigada.tim@bk.ru
+
 * https://github.com/Maksim-Trolina
 * https://github.com/EugenKoulik
