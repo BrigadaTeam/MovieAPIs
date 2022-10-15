@@ -2,9 +2,9 @@ name: .NET Pipeline
 
 on: 
   push:
-    branches: [ 'develop' 'master' ]
+    branches: [ 'develop', 'master' ]
   pull_request:
-    branches: [ 'develop' 'master' ] 
+    branches: [ 'develop', 'master' ] 
 
 jobs:    
   build-linux-dotnet6:
